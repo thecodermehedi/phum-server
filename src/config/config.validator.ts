@@ -2,9 +2,9 @@ import { z } from 'zod';
 
 // Define validation for common application configuration
 export const CommonConfigValidation = z.object({
-  port: z.number(),
-  nodeEnv: z.enum(['development', 'production']),
-  defaultPassword: z.string(),
+  port: z.number().default(5000),
+  nodeEnv: z.enum(['development', 'production']).default('development'),
+  defaultPassword: z.string().default('phuniapi@admin'),
 });
 
 // Define validation for development database configuration
@@ -22,7 +22,7 @@ export const ProdDbConfigValidation = DevDbConfigValidation.extend({
 
 // Define environment schema incorporating both development and production configurations
 export const EnvValidation = z.object({
-  APP_PORT: z.string().transform((val) => parseInt(val, 10)),
+  APP_PORT: z.number(),
   APP_ENV: z.enum(['development', 'production']),
   // Development Database
   DB_DEV_URI: z.string(),
