@@ -1,4 +1,7 @@
-📦ph-university-server
+# phuniapi
+
+```md
+📦phuniapi
  ┣ 📂src
  ┃ ┣ 📂config
  ┃ ┃ ┗ 📜index.ts
@@ -28,3 +31,4 @@
  ┣ 📜README.md
  ┣ 📜tsconfig.json
  ┗ 📜vercel.json
+```
