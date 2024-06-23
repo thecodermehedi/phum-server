@@ -1,11 +1,8 @@
 import config from '../../config';
-import { TUser } from './user.interface';
+import { TUser } from './user.types';
 import UserModel from './user.model';
 
-const createStudentIntoDB = async (
-  studentData: TStudent,
-  pswd: string,
-) => {
+const createStudentIntoDB = async (studentData: TStudent, pswd: string) => {
   const user: Partial<TUser> = {
     id: '20240620',
     role: 'student',
@@ -14,7 +11,7 @@ const createStudentIntoDB = async (
 
   //TODO: Add logic to generate user id
 
-  const result = await UserModel.create(user);
+  // const result = await UserModel.create(user);
 };
 
 export const UserServices = {
