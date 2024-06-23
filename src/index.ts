@@ -6,15 +6,7 @@ import express, { Application, Request, Response } from 'express';
 
 export const app: Application = express();
 
-const {
-  port,
-  nodeEnv,
-  dbUri,
-  dbHost,
-  dbName,
-  dbUser,
-  dbPass,
-} = config;
+const { port, nodeEnv, dbUri, dbHost, dbName } = config;
 
 app.use(express.json());
 app.use(cors());
@@ -31,23 +23,21 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 (async () => {
-  let dbStringUri: string;
+  let dbStringUri: string = dbUri
+    .replace('<hostname>', dbHost)
+    .replace('<database>', dbName);
+
+  if (nodeEnv === 'production') {
+    dbStringUri = dbUri
+      .replace('<username>', config.dbUser || 'notFound')
+      .replace('<password>', config.dbPass || 'notFound')
+      .replace('<boolean>', 'true')
+      .replace('<string>', 'majority');
+  }
+
   try {
-    if (nodeEnv === 'production') {
-      dbStringUri = dbUri
-        .replace('<username>', dbUser)
-        .replace('<password>', dbPass)
-        .replace('<hostname>', dbHost)
-        .replace('<database>', dbName)
-        .replace('<boolean>', 'true')
-        .replace('<string>', 'majority');
-    } else {
-      dbStringUri = dbUri
-        .replace('<hostname>', 'localhost')
-        .replace('<database>', 'phuniapiDB');
-    }
     if (dbStringUri) {
-      console.log('🟡 Connecting...')
+      console.log('🟡 Connecting...');
       await mongoose.connect(dbStringUri);
       console.log(
         nodeEnv === 'development'
