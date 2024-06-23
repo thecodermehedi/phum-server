@@ -1,40 +1,20 @@
-import {
-  IDevConfig,
-  IProdConfig,
-} from './config.interface';
-import {
-  CommonConfigValidation,
-  DevDbConfigValidation,
-  EnvValidation,
-  ProdDbConfigValidation,
-} from './config.validator';
+import TConfig from "./config.types";
+import configValidation from "./config.validator";
 
-const parsedEnv = EnvValidation.parse(process.env);
+const rawConfig = {
+  ...(process.env.APP_PORT?.trim() ? { port: process.env.APP_PORT } : {}),
+  ...(process.env.APP_ENV?.trim() ? { nodeEnv: process.env.APP_ENV } : {}),
+  ...(process.env.DEF_PWD?.trim() ? { defaultPassword: process.env.DEF_PWD } : {}),
+  ...(process.env.DB_URI?.trim() ? { dbUri: process.env.DB_URI } : {}),
+  ...(process.env.DB_HOST?.trim() ? { dbHost: process.env.DB_HOST } : {}),
+  ...(process.env.DB_NAME?.trim() ? { dbName: process.env.DB_NAME } : {}),
+  ...(process.env.DB_USER?.trim() ? { dbUser: process.env.DB_USER } : {}),
+  ...(process.env.DB_PASS?.trim() ? { dbPass: process.env.DB_PASS } : {}),
+};
 
-let config: IDevConfig | IProdConfig;
+const config: TConfig = configValidation.parse(rawConfig);
 
-const commonConfig = CommonConfigValidation.parse({
-  nodeEnv: parsedEnv.APP_ENV,
-  port: parsedEnv.APP_PORT,
-  defaultPassword: parsedEnv.DEF_PWD,
-});
-
-if (parsedEnv.APP_ENV === 'production') {
-  const prodConfig = ProdDbConfigValidation.parse({
-    dbUri: parsedEnv.DB_PROD_URI,
-    dbUser: parsedEnv.DB_PROD_USER,
-    dbPass: parsedEnv.DB_PROD_PASS,
-    dbName: parsedEnv.DB_PROD_NAME,
-    dbHost: parsedEnv.DB_PROD_HOST,
-  });
-  config = { ...commonConfig, ...prodConfig };
-} else {
-  const devConfig = DevDbConfigValidation.parse({
-    dbUri: parsedEnv.DB_DEV_URI,
-    dbHost: parsedEnv.DB_DEV_HOST,
-    dbName: parsedEnv.DB_DEV_NAME,
-  });
-  config = { ...commonConfig, ...devConfig };
-}
+console.log('parsedConfig:->');
+console.table(config);
 
 export default config;
