@@ -7,6 +7,7 @@ type TConfig = {
   dbName: string;
   dbUser?: string;
   dbPass?: string;
+  bcrypt_salt_rounds: number;
 };
 
 export default TConfig;

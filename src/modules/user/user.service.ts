@@ -2,6 +2,7 @@ import config from '../../config';
 import { TUser } from './user.types';
 import UserModel from './user.model';
 import { TStudent } from '../student/student.types';
+import { StudentModel } from '../student/student.model';
 
 const createStudentIntoDB = async (studentData: TStudent, pswd: string) => {
   const userData: Partial<TUser> = {
@@ -17,11 +18,8 @@ const createStudentIntoDB = async (studentData: TStudent, pswd: string) => {
   if (Object.keys(newUser).length) {
     studentData.id = newUser.id;
     studentData.userId = newUser._id;
-
-    // const newStudent = await
-
+    return await StudentModel.create(studentData);
   }
-
 };
 
 export const UserServices = {

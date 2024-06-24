@@ -3,6 +3,8 @@ import morgan from 'morgan';
 import config from './config';
 import mongoose from 'mongoose';
 import express, { Application, Request, Response } from 'express';
+import globalErrorHandler from './middlewares/globalErrorHandler';
+import notFound from './middlewares/notFound';
 
 export const app: Application = express();
 
@@ -10,7 +12,7 @@ const { port, nodeEnv, dbUri, dbHost, dbName } = config;
 
 app.use(express.json());
 app.use(cors());
-app.use(morgan('dev'));
+
 
 app.get('/', (req: Request, res: Response) => {
   const currentDate = new Date();
@@ -21,6 +23,11 @@ app.get('/', (req: Request, res: Response) => {
     timestamp: `${formattedDate} ${formattedTime}`,
   });
 });
+
+app.use(globalErrorHandler)
+app.use(notFound)
+app.use(morgan('dev'));
+
 
 (async () => {
   let dbStringUri: string = dbUri
