@@ -1,10 +1,12 @@
-import { StudentModel } from "./student.model";
+import { StudentModel } from './student.model';
 
-const getAllStudentsFromDB = () =>  StudentModel.find();
+const getAllStudentsFromDB = () => StudentModel.find();
 
-const getSingleStudentFromDB = (id: string) => StudentModel.aggregate([{ $match: { id } }]);
+const getSingleStudentFromDB = (id: string) =>
+  StudentModel.aggregate([{ $match: { id } }]);
 
-const deleteStudentFromDB = (id: string) => StudentModel.updateOne({ id }, { isDeleted: true });
+const deleteStudentFromDB = (id: string) =>
+  StudentModel.updateOne({ id }, { isDeleted: true });
 
 export const StudentServices = {
   getAllStudentsFromDB,

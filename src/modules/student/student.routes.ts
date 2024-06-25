@@ -1,7 +1,7 @@
-import { Router } from 'express';
 import { StudentControllers } from './student.controller';
+import createRouter from '../../utils/createRouter';
 
-const router = Router();
+const router = createRouter();
 
 router.get('/', StudentControllers.getAllStudents);
 

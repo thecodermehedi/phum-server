@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { Schema, model } from 'mongoose';
+import { Schema, model } from '../../utils';
 import { TUser } from './user.types';
 import config from '../../config';
 

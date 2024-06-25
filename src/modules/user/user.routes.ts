@@ -1,7 +1,7 @@
-import { Router } from 'express';
+import createRouter from '../../utils/createRouter';
 import { UserControllers } from './user.controller';
 
-const router = Router();
+const router = createRouter();
 
 router.post('/create-student', UserControllers.createStudent);
 

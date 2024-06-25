@@ -1,19 +1,16 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from '../utils';
 
 const globalErrorHandler = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   err: any,
   req: Request,
   res: Response,
-  next: NextFunction,
 ) => {
-  const statusCode = 500;
-  const message = err.message || 'Something went wrong';
-  const ponse = res.status(statusCode).json({
+  return res.status(500).json({
     success: false,
-    message,
+    message: err.message || 'Something went wrong',
     error: err,
   });
-  return ponse;
 };
 
 export default globalErrorHandler;

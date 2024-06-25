@@ -2,7 +2,9 @@ import TConfig from './config.types';
 import configValidation from './config.validator';
 
 const rawConfig = {
-  ...(process.env.APP_PORT?.trim() ? { port: Number(process.env.APP_PORT) } : {}),
+  ...(process.env.APP_PORT?.trim()
+    ? { port: Number(process.env.APP_PORT) }
+    : {}),
   ...(process.env.APP_ENV?.trim() ? { nodeEnv: process.env.APP_ENV } : {}),
   ...(process.env.DEF_PWD?.trim()
     ? { defaultPassword: process.env.DEF_PWD }
@@ -19,6 +21,7 @@ const rawConfig = {
 
 const config: TConfig = configValidation.parse(rawConfig);
 
-// console.table(config);
+// eslint-disable-next-line no-console
+console.table(config);
 
 export default config;
