@@ -6,7 +6,7 @@ import express, {
   NextFunction,
   Router,
   RequestHandler,
-  ErrorRequestHandler
+  ErrorRequestHandler,
 } from 'express';
 
 export {

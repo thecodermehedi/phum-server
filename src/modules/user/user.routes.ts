@@ -5,6 +5,10 @@ import { UserControllers } from './user.controller';
 
 const router = createRouter();
 
-router.post('/create-student', validateRequest(studentValidations.studentValidationSchema), UserControllers.createStudent);
+router.post(
+  '/create-student',
+  validateRequest(studentValidations.studentValidationSchema),
+  UserControllers.createStudent,
+);
 
 export const UserRoutes = router;

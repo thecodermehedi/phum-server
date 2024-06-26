@@ -46,10 +46,10 @@ const studentValidationSchema = z.object({
       guardian: guardianValidationSchema,
       localGuardian: localGuardianValidationSchema,
       profileImg: z.string().optional(),
-    })
-  })
+    }),
+  }),
 });
 
 export const studentValidations = {
-  studentValidationSchema
+  studentValidationSchema,
 };

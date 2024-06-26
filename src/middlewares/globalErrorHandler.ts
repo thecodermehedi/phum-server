@@ -6,7 +6,7 @@ const globalErrorHandler: ErrorRequestHandler = (
   req,
   res,
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  next
+  next,
 ) => {
   if (err instanceof ZodError) {
     const errorMessages =

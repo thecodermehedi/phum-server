@@ -15,7 +15,7 @@ const createStudentIntoDB = async (studentData: TStudent, pswd: string) => {
   // const parsedUserData = userValidationSchema.parse(userData);
   //TODO: Add logic to generate user id
   const newUser = await UserModel.create(userData);
-  console.table(newUser)
+  console.table(newUser);
   if (Object.keys(newUser).length) {
     return await StudentModel.create({
       ...studentData,
