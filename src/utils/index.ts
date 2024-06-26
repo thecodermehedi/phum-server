@@ -6,6 +6,7 @@ import express, {
   NextFunction,
   Router,
   RequestHandler,
+  ErrorRequestHandler
 } from 'express';
 
 export {
@@ -17,6 +18,7 @@ export {
   NextFunction,
   Router,
   RequestHandler,
+  ErrorRequestHandler,
 
   // mongoose
   Schema,
