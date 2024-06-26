@@ -2,7 +2,6 @@ import httpStatus from 'http-status';
 import sendResponse from '../../utils/sendResponse';
 import { StudentServices } from './student.service';
 import { RequestHandler } from '../../utils';
-import isValidObjectId from '../../utils/isValidObjectId';
 import catchAsync from '../../utils/catchAsync';
 
 const getSingleStudent: RequestHandler = catchAsync(async (req, res) => {
@@ -36,16 +35,15 @@ const getAllStudents: RequestHandler = catchAsync(async (req, res) => {
 
 const deleteStudent: RequestHandler = catchAsync(async (req, res) => {
   const { studentId } = req.params;
-  const isValid = isValidObjectId(studentId);
-  if (!isValid) {
+  const result = await StudentServices.deleteStudentFromDB(studentId);
+  if (!result.modifiedCount) {
     return sendResponse(res, {
-      statusCode: httpStatus.BAD_REQUEST,
+      statusCode: httpStatus.NOT_FOUND,
       success: false,
-      message: 'Invalid studentId format',
+      message: 'Student not found in the database',
       data: null,
     });
   }
-  const result = await StudentServices.deleteStudentFromDB(studentId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
