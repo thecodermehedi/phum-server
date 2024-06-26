@@ -1,7 +1,7 @@
-import { Request, Response } from '../utils';
+import { RequestHandler } from '../utils';
 import httpStatus from 'http-status';
-
-const notFound = (req: Request, res: Response) => {
+// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+const notFound: RequestHandler = (req, res, next) => {
   return res.status(httpStatus.NOT_FOUND).json({
     sucess: false,
     message: 'Route not found',
