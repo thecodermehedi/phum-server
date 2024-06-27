@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, Types } from 'mongoose';
+import mongoose, { Schema, model, Types, ObjectId } from 'mongoose';
 import express, {
   Application,
   Request,
@@ -25,4 +25,5 @@ export {
   model,
   Types,
   mongoose,
+  ObjectId
 };

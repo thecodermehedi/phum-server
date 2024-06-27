@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import config from '../../config';
 import { TUser } from './user.types';
 import UserModel from './user.model';
@@ -15,7 +14,6 @@ const createStudentIntoDB = async (studentData: TStudent, pswd: string) => {
   // const parsedUserData = userValidationSchema.parse(userData);
   //TODO: Add logic to generate user id
   const newUser = await UserModel.create(userData);
-  console.table(newUser);
   if (Object.keys(newUser).length) {
     return await StudentModel.create({
       ...studentData,

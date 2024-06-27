@@ -1,4 +1,4 @@
-import { Types } from '../../utils';
+import { ObjectId } from '../../utils';
 
 export type TUserName = {
   firstName: string;
@@ -15,6 +15,8 @@ export type TUserName = {
 //   postOffice?: string;
 //   postCode: string;
 // };
+export type TGender = 'male' | 'female' | '3rdGender';
+export type TBloodGroup = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
 
 export type TGuardian = {
   fatherName: string;
@@ -34,18 +36,19 @@ export type TLocalGuardian = {
 
 export type TStudent = {
   id: string;
-  userId: Types.ObjectId;
+  userId: ObjectId;
   name: TUserName;
-  gender: 'male' | 'female' | '3rdGender';
-  dateOfBirth?: string;
+  gender: TGender;
+  dateOfBirth?: Date;
   email: string;
   contactNo: string;
   emergencyContactNo: string;
-  bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
+  bloodGroup?: TBloodGroup;
   presentAddress: string;
   permanentAddress: string;
   guardian: TGuardian;
   localGuardian: TLocalGuardian;
+  admissionSemester: ObjectId
   profileImg?: string;
   isDeleted?: boolean;
 };

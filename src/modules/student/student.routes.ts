@@ -1,5 +1,5 @@
-import { StudentControllers } from './student.controller';
 import createRouter from '../../utils/createRouter';
+import { StudentControllers } from './student.controller';
 
 const router = createRouter();
 
