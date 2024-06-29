@@ -5,8 +5,18 @@ import sendResponse from '../../utils/sendResponse';
 import catchAsync from '../../utils/catchAsync';
 
 const createStudent: RequestHandler = catchAsync(async (req, res) => {
-  const { password, student: studentData } = req.body;
-  const result = await UserServices.createStudentIntoDB(studentData, password);
+  const result = await UserServices.createStudentIntoDB(
+    req.body.password,
+    req.body.student,
+  );
+  if (!result) {
+    return sendResponse(res, {
+      statusCode: httpStatus.NOT_FOUND,
+      success: false,
+      message: 'admissionSemester not found in the database',
+      data: null,
+    });
+  }
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

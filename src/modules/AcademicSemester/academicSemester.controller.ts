@@ -5,17 +5,37 @@ import { RequestHandler } from '../../utils';
 import { AcademicSemesterServices } from './AcademicSemester.service';
 import isValidObjectId from '../../utils/isValidObjectId';
 
+const createAcademicSemester: RequestHandler = catchAsync(async (req, res) => {
+  const result = await AcademicSemesterServices.createAcademicSemesterIntoDB(req.body);
+  if (!result) {
+    return sendResponse(res, {
+      statusCode: httpStatus.BAD_REQUEST,
+      success: false,
+      message: 'Semester Code is not valid',
+      data: null,
+    });
+  }
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Academic Semister is created successfully',
+    data: result,
+  });
+});
+
 const getSingleAcademicSemester: RequestHandler = catchAsync(async (req, res) => {
-  const isValid = isValidObjectId(req.params.semesterId)
+  const isValid = isValidObjectId(req.params.semesterId);
   if (!isValid) {
     return sendResponse(res, {
       statusCode: httpStatus.BAD_REQUEST,
       success: false,
       message: 'Academic Semester Id is not valid',
-      data: null
-    })
+      data: null,
+    });
   }
-  const result = await AcademicSemesterServices.getSingleAcademicSemesterFromDB(req.params.semesterId);
+  const result = await AcademicSemesterServices.getSingleAcademicSemesterFromDB(
+    req.params.semesterId,
+  );
   if (!result.length) {
     return sendResponse(res, {
       statusCode: httpStatus.NOT_FOUND,
@@ -42,17 +62,27 @@ const getAllAcademicSemesters: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
-const createAcademicSemester: RequestHandler = catchAsync(async (req, res) => {
-  const result = await AcademicSemesterServices.createAcademicSemesterIntoDB(req.body);
+const updateSingleAcademicSemester: RequestHandler = catchAsync(async (req, res) => {
+  const isValid = isValidObjectId(req.params.semesterId);
+  if (!isValid) {
+    return sendResponse(res, {
+      statusCode: httpStatus.BAD_REQUEST,
+      success: false,
+      message: 'Academic Semester Id is not valid',
+      data: null,
+    });
+  }
+  const result = await AcademicSemesterServices.updateSingleAcademicSemesterFromDB(
+    req.params.semesterId,
+    req.body,
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Academic Semister is created successfully',
+    message: 'Academic Semester is updated successfully',
     data: result,
   });
 });
-
-
 
 // const deleteStudent: RequestHandler = catchAsync(async (req, res) => {
 //   const { studentId } = req.params;
@@ -76,5 +106,6 @@ const createAcademicSemester: RequestHandler = catchAsync(async (req, res) => {
 export const AcademicSemesterControllers = {
   createAcademicSemester,
   getSingleAcademicSemester,
-  getAllAcademicSemesters
+  getAllAcademicSemesters,
+  updateSingleAcademicSemester,
 };

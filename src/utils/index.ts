@@ -25,5 +25,5 @@ export {
   model,
   Types,
   mongoose,
-  ObjectId
+  ObjectId,
 };

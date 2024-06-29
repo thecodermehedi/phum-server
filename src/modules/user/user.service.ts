@@ -3,20 +3,22 @@ import { TUser } from './user.types';
 import UserModel from './user.model';
 import { TStudent } from '../student/student.types';
 import { StudentModel } from '../student/student.model';
-// import userValidationSchema from './user.validator';
+import AcademicSemesterModel from '../AcademicSemester/AcademicSemester.model';
+import { generateStudentId } from './user.utils';
 
-const createStudentIntoDB = async (studentData: TStudent, pswd: string) => {
+const createStudentIntoDB = async (password: string, payload: TStudent) => {
+  const result = await AcademicSemesterModel.findById(payload.admissionSemester);
+  if (!result) return undefined;
   const userData: Partial<TUser> = {
-    id: '20240620',
+    id: await generateStudentId(result),
     role: 'student',
-    password: pswd || config.defaultPassword,
+    password: password || config.defaultPassword,
   };
-  // const parsedUserData = userValidationSchema.parse(userData);
-  //TODO: Add logic to generate user id
   const newUser = await UserModel.create(userData);
+
   if (Object.keys(newUser).length) {
     return await StudentModel.create({
-      ...studentData,
+      ...payload,
       id: newUser.id,
       userId: newUser._id,
     });
