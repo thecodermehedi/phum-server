@@ -1,5 +1,4 @@
-import httpStatus from 'http-status';
-import { RequestHandler } from '../../utils';
+import { RequestHandler, httpStatus } from '../../utils';
 import { UserServices } from './user.service';
 import sendResponse from '../../utils/sendResponse';
 import catchAsync from '../../utils/catchAsync';

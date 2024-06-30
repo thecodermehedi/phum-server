@@ -1,7 +1,7 @@
 import { Schema, model } from '../../utils';
 import { TAcademicFaculty } from './academicFaculty.types';
 
-const academicFacultySchema = new Schema<TAcademicFaculty>(
+const AcademicFacultySchema = new Schema<TAcademicFaculty>(
   {
     name: {
       type: String,
@@ -16,5 +16,5 @@ const academicFacultySchema = new Schema<TAcademicFaculty>(
 
 export const AcademicFacultyModel = model<TAcademicFaculty>(
   'AcademicFaculty',
-  academicFacultySchema,
+  AcademicFacultySchema,
 );

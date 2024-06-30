@@ -6,15 +6,6 @@ export type TUserName = {
   lastName: string;
 };
 
-// type TAddress = {
-//   division: string;
-//   district: string;
-//   upazila: string;
-//   union?: string;
-//   village?: string;
-//   postOffice?: string;
-//   postCode: string;
-// };
 export type TGender = 'male' | 'female' | '3rdGender';
 export type TBloodGroup = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
 

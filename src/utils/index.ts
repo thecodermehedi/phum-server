@@ -1,3 +1,4 @@
+import httpStatus from 'http-status';
 import mongoose, { Schema, model, Types, ObjectId } from 'mongoose';
 import express, {
   Application,
@@ -26,4 +27,7 @@ export {
   Types,
   mongoose,
   ObjectId,
+
+  // extra
+  httpStatus
 };

@@ -1,4 +1,3 @@
-import { Types } from '../../utils';
 import { AcademicSemesterNameCodeMapper } from './AcademicSemester.constant';
 import AcademicSemesterModel from './AcademicSemester.model';
 import { TAcademicSemester } from './AcademicSemester.types';
@@ -8,15 +7,12 @@ const createAcademicSemesterIntoDB = async (payload: TAcademicSemester) => {
   return await AcademicSemesterModel.create(payload);
 };
 
-const getSingleAcademicSemesterFromDB = async (semesterId: string) => {
-  return AcademicSemesterModel.aggregate([
-    { $match: { _id: new Types.ObjectId(semesterId) } },
-  ]);
-};
+const getAcademicSemesterFromDB = async (semesterId: string) =>
+  AcademicSemesterModel.findById(semesterId);
 
-const getAllAcademicSemesterFromDB = () => AcademicSemesterModel.find();
+const getAcademicSemestersFromDB = () => AcademicSemesterModel.find();
 
-const updateSingleAcademicSemesterFromDB = async (
+const updateAcademicSemesterFromDB = async (
   semesterId: string,
   payload: Partial<TAcademicSemester>,
 ) => {
@@ -34,7 +30,7 @@ const updateSingleAcademicSemesterFromDB = async (
 
 export const AcademicSemesterServices = {
   createAcademicSemesterIntoDB,
-  getSingleAcademicSemesterFromDB,
-  getAllAcademicSemesterFromDB,
-  updateSingleAcademicSemesterFromDB,
+  getAcademicSemesterFromDB,
+  getAcademicSemestersFromDB,
+  updateAcademicSemesterFromDB,
 };

@@ -1,7 +1,6 @@
-import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
-import { RequestHandler } from '../../utils';
+import { RequestHandler, httpStatus } from '../../utils';
 import { AcademicSemesterServices } from './AcademicSemester.service';
 import isValidObjectId from '../../utils/isValidObjectId';
 
@@ -23,7 +22,25 @@ const createAcademicSemester: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
-const getSingleAcademicSemester: RequestHandler = catchAsync(async (req, res) => {
+const getAcademicSemesters: RequestHandler = catchAsync(async (req, res) => {
+  const result = await AcademicSemesterServices.getAcademicSemestersFromDB();
+  if (!result.length) {
+    return sendResponse(res, {
+      statusCode: httpStatus.NOT_FOUND,
+      success: false,
+      message: 'No Academic Semester found in the database',
+      data: null,
+    });
+  }
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Academic Semesters are retrieved successfully',
+    data: result,
+  });
+});
+
+const getAcademicSemester: RequestHandler = catchAsync(async (req, res) => {
   const isValid = isValidObjectId(req.params.semesterId);
   if (!isValid) {
     return sendResponse(res, {
@@ -33,10 +50,10 @@ const getSingleAcademicSemester: RequestHandler = catchAsync(async (req, res) =>
       data: null,
     });
   }
-  const result = await AcademicSemesterServices.getSingleAcademicSemesterFromDB(
+  const result = await AcademicSemesterServices.getAcademicSemesterFromDB(
     req.params.semesterId,
   );
-  if (!result.length) {
+  if (!result) {
     return sendResponse(res, {
       statusCode: httpStatus.NOT_FOUND,
       success: false,
@@ -52,17 +69,7 @@ const getSingleAcademicSemester: RequestHandler = catchAsync(async (req, res) =>
   });
 });
 
-const getAllAcademicSemesters: RequestHandler = catchAsync(async (req, res) => {
-  const result = await AcademicSemesterServices.getAllAcademicSemesterFromDB();
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Academic Semesters are retrieved successfully',
-    data: result,
-  });
-});
-
-const updateSingleAcademicSemester: RequestHandler = catchAsync(async (req, res) => {
+const updateAcademicSemester: RequestHandler = catchAsync(async (req, res) => {
   const isValid = isValidObjectId(req.params.semesterId);
   if (!isValid) {
     return sendResponse(res, {
@@ -72,7 +79,7 @@ const updateSingleAcademicSemester: RequestHandler = catchAsync(async (req, res)
       data: null,
     });
   }
-  const result = await AcademicSemesterServices.updateSingleAcademicSemesterFromDB(
+  const result = await AcademicSemesterServices.updateAcademicSemesterFromDB(
     req.params.semesterId,
     req.body,
   );
@@ -84,28 +91,9 @@ const updateSingleAcademicSemester: RequestHandler = catchAsync(async (req, res)
   });
 });
 
-// const deleteStudent: RequestHandler = catchAsync(async (req, res) => {
-//   const { studentId } = req.params;
-//   const result = await StudentServices.deleteStudentFromDB(studentId);
-//   if (!result.modifiedCount) {
-//     return sendResponse(res, {
-//       statusCode: httpStatus.NOT_FOUND,
-//       success: false,
-//       message: 'Student not found in the database',
-//       data: null,
-//     });
-//   }
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: 'Student is deleted succesfully',
-//     data: result,
-//   });
-// });
-
 export const AcademicSemesterControllers = {
   createAcademicSemester,
-  getSingleAcademicSemester,
-  getAllAcademicSemesters,
-  updateSingleAcademicSemester,
+  getAcademicSemester,
+  getAcademicSemesters,
+  updateAcademicSemester,
 };
