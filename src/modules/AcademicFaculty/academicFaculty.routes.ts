@@ -7,9 +7,7 @@ const router = createRouter();
 
 router.post(
   '/create-academic-faculty',
-  validateRequest(
-    AcademicFacultyValidations.createAcademicFacultyValidationSchema,
-  ),
+  validateRequest(AcademicFacultyValidations.createAcademicFacultyValidationSchema),
   AcademicFacultyControllers.createAcademicFaculty,
 );
 
@@ -19,9 +17,7 @@ router.get('/:facultyId', AcademicFacultyControllers.getAcademicFaculty);
 
 router.patch(
   '/:facultyId',
-  validateRequest(
-    AcademicFacultyValidations.updateAcademicFacultyValidationSchema,
-  ),
+  validateRequest(AcademicFacultyValidations.updateAcademicFacultyValidationSchema),
   AcademicFacultyControllers.updateAcademicFaculty,
 );
 

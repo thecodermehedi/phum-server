@@ -1,19 +1,11 @@
-import catchAsync from "../../utils/catchAsync";
-import sendResponse from "../../utils/sendResponse";
-import { AcademicFacultyServices } from "./academicFaculty.service";
-import isValidObjectId from "../../utils/isValidObjectId";
-import { RequestHandler, httpStatus } from "../../utils";
+import catchAsync from '../../utils/catchAsync';
+import sendResponse from '../../utils/sendResponse';
+import { AcademicFacultyServices } from './academicFaculty.service';
+import isValidObjectId from '../../utils/isValidObjectId';
+import { RequestHandler, httpStatus } from '../../utils';
 
 const createAcademicFaculty: RequestHandler = catchAsync(async (req, res) => {
   const result = await AcademicFacultyServices.createAcademicFacultyIntoDB(req.body);
-  // if (!result) {
-  //   return sendResponse(res, {
-  //     statusCode: httpStatus.BAD_REQUEST,
-  //     success: false,
-  //     message: 'Semester Code is not valid',
-  //     data: null,
-  //   });
-  // }
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

@@ -1,5 +1,5 @@
 import { ZodError } from 'zod';
-import { ErrorRequestHandler } from '../utils';
+import { ErrorRequestHandler, httpStatus } from '../utils';
 
 const globalErrorHandler: ErrorRequestHandler = (
   err,
@@ -13,16 +13,16 @@ const globalErrorHandler: ErrorRequestHandler = (
       err.issues.length === 1
         ? err.issues[0].message
         : err.issues.map((issue) => issue.message).join(', ');
-    res.status(400).json({
+    res.status(httpStatus.BAD_REQUEST).json({
       success: false,
       message: `${err.issues.length > 1 ? `${err.issues.length} validation error(s): ` : ''}${errorMessages}`,
       errors: err.issues,
     });
   } else {
-    return res.status(500).json({
+    return res.status(err.statusCode || httpStatus.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: 'Something went wrong',
-      error: err,
+      message: err.message || 'Something went wrong',
+      error: Object.keys(err).length === 0 ? null : err,
     });
   }
 };

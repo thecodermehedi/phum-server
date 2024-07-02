@@ -5,7 +5,8 @@ const createAcademicFacultyIntoDB = async (payload: TAcademicFaculty) => {
   return await AcademicFacultyModel.create(payload);
 };
 
-const getAcademicFacultyFromDB = (facultyId: string) => AcademicFacultyModel.findById(facultyId);
+const getAcademicFacultyFromDB = (facultyId: string) =>
+  AcademicFacultyModel.findById(facultyId);
 
 const getAcademicFacultiesFromDB = () => AcademicFacultyModel.find();
 

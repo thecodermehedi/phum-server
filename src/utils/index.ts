@@ -29,5 +29,5 @@ export {
   ObjectId,
 
   // extra
-  httpStatus
+  httpStatus,
 };

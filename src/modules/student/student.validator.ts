@@ -1,6 +1,7 @@
 import { z } from 'zod';
+import { BloodGroups, Genders } from './student.constant';
 
-const userNameValidationSchema = z.object({
+const fullNameValidationSchema = z.object({
   firstName: z
     .string()
     .min(1)
@@ -32,23 +33,49 @@ const createStudentValidationSchema = z.object({
   body: z.object({
     password: z.string().max(20),
     student: z.object({
-      name: userNameValidationSchema,
-      gender: z.enum(['male', 'female', 'other']),
+      name: fullNameValidationSchema,
+      gender: z.enum(Genders as [string, ...string[]]),
       dateOfBirth: z.string().optional(),
       email: z.string().email(),
       contactNo: z.string(),
       emergencyContactNo: z.string(),
-      bloogGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).optional(),
+      bloodGroup: z.enum(BloodGroups as [string, ...string[]]).optional(),
       presentAddress: z.string(),
       permanentAddress: z.string(),
       guardian: guardianValidationSchema,
       localGuardian: localGuardianValidationSchema,
       admissionSemester: z.string(),
+      academicDepartment: z.string(),
       profileImg: z.string().optional(),
     }),
   }),
 });
 
+
+
+export const updateStudentValidationSchema = z.object({
+  body: z.object({
+    student: z.object({
+      name: fullNameValidationSchema.partial(),
+      gender: z.enum(Genders as [string, ...string[]]).optional(),
+      dateOfBirth: z.string().optional(),
+      email: z.string().email().optional(),
+      contactNo: z.string().optional(),
+      emergencyContactNo: z.string().optional(),
+      bloodGroup: z.enum(BloodGroups as [string, ...string[]]).optional(),
+      presentAddress: z.string().optional(),
+      permanentAddress: z.string().optional(),
+      guardian: guardianValidationSchema.partial(),
+      localGuardian: localGuardianValidationSchema.partial(),
+      admissionSemester: z.string().optional(),
+      academicDepartment: z.string().optional(),
+      profileImg: z.string().optional(),
+    })
+  }),
+});
+
+
 export const studentValidations = {
   createStudentValidationSchema,
+  updateStudentValidationSchema
 };

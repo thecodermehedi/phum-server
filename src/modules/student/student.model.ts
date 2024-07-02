@@ -1,7 +1,7 @@
 import { Schema, model, Types } from '../../utils';
-import { TGuardian, TLocalGuardian, TStudent, TUserName } from './student.types';
+import { TGuardian, TLocalGuardian, TStudent, TFullName } from './student.types';
 
-const userNameSchema = new Schema<TUserName>({
+const userNameSchema = new Schema<TFullName>({
   firstName: {
     type: String,
     required: [true, 'First Name is required'],
@@ -129,6 +129,7 @@ const studentSchema = new Schema<TStudent>(
     },
     profileImg: { type: String },
     admissionSemester: { type: Types.ObjectId, ref: 'AcademicSemester' },
+    academicDepartment: { type: Types.ObjectId, ref: 'AcademicDepartment' },
     isDeleted: {
       type: Boolean,
       default: false,

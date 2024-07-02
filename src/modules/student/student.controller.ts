@@ -39,7 +39,33 @@ const getStudent: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+const updateStudent: RequestHandler = catchAsync(async (req, res) => {
+  const result = await StudentServices.updateStudentFromDB(req.params.studentId, req.body)
+  if(!result){
+    return sendResponse(res, {
+      statusCode: httpStatus.BAD_REQUEST,
+      success: false,
+      message: 'Student is not updated succesfully',
+      data: null
+    })
+  }
+})
+
+const deleteStudent: RequestHandler = catchAsync(async (req, res) => {
+  const result = await StudentServices.deleteStudentFromDB(req.params.studentId)
+  if(!result){
+    return sendResponse(res, {
+      statusCode: httpStatus.BAD_REQUEST,
+      success: false,
+      message: 'Student is not deleted succesfully',
+      data: null
+    })
+  }
+})
+
 export const StudentControllers = {
   getStudents,
   getStudent,
+  updateStudent,
+  deleteStudent
 };

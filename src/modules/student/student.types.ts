@@ -1,6 +1,6 @@
 import { ObjectId } from '../../utils';
 
-export type TUserName = {
+export type TFullName = {
   firstName: string;
   middleName?: string;
   lastName: string;
@@ -28,7 +28,7 @@ export type TLocalGuardian = {
 export type TStudent = {
   id: string;
   userId: ObjectId;
-  name: TUserName;
+  name: TFullName;
   gender: TGender;
   dateOfBirth?: Date;
   email: string;
@@ -40,6 +40,7 @@ export type TStudent = {
   guardian: TGuardian;
   localGuardian: TLocalGuardian;
   admissionSemester: ObjectId;
+  academicDepartment: ObjectId;
   profileImg?: string;
   isDeleted?: boolean;
 };

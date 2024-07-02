@@ -1,4 +1,5 @@
-import { Schema, model } from '../../utils';
+import AppError from '../../errors/AppError';
+import { Schema, httpStatus, model } from '../../utils';
 import {
   AcademicSemesterCodes,
   AcademicSemesterNames,
@@ -44,7 +45,16 @@ AcademicSemesterSchema.pre('save', async function (next) {
     name: this.name,
   });
   if (isAcademicSemesterExists) {
-    throw new Error('Academic Semester is already exists!');
+    throw new AppError(httpStatus.CONFLICT, 'Academic Semester is already exists!');
+  }
+  next();
+});
+
+AcademicSemesterSchema.pre('findOneAndUpdate', async function (next) {
+  const id = this.getQuery()._id;
+  const existingDepartment = await AcademicSemesterModel.findById(id);
+  if (!existingDepartment) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Academic Semester not found!');
   }
   next();
 });
