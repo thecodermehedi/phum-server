@@ -52,7 +52,7 @@ const updateStudent: RequestHandler = catchAsync(async (req, res) => {
       data: null,
     });
   }
-  return sendResponse(res, {
+  sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Student is updated successfully',
@@ -70,6 +70,12 @@ const deleteStudent: RequestHandler = catchAsync(async (req, res) => {
       data: null,
     });
   }
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Student is deleted successfully',
+    data: null,
+  });
 });
 
 export const StudentControllers = {

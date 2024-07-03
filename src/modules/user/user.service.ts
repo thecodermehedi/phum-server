@@ -7,25 +7,33 @@ import AcademicSemesterModel from '../AcademicSemester/AcademicSemester.model';
 import { generateStudentId } from './user.utils';
 import { httpStatus, mongoose } from '../../utils';
 import AppError from '../../errors/AppError';
+import { AcademicDepartmentModel } from '../AcademicDepartment/academicDepartment.model';
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
-  const result = await AcademicSemesterModel.findById(payload.admissionSemester);
-  if (!result) return undefined;
+  const isAdmissionSemesterExists = await AcademicSemesterModel.findById(payload.admissionSemester);
+  if (!isAdmissionSemesterExists) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Admission Semester was not found in the database')
+  }
 
-  const currentSession = await mongoose.startSession();
+  const isAcademicDepartmentExists = await AcademicDepartmentModel.findById(payload.academicDepartment);
+  if (!isAcademicDepartmentExists) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Academic Department was not found in the database')
+  }
+
+  const createSession = await mongoose.startSession();
 
   try {
     // start transaction
-    currentSession.startTransaction();
+    createSession.startTransaction();
 
     const userData: Partial<TUser> = {
-      id: await generateStudentId(result),
+      id: await generateStudentId(isAdmissionSemesterExists),
       role: 'student',
       password: password || config.defaultPassword,
     };
 
     // transaction - 1
-    const newUser = await UserModel.create([userData], { currentSession });
+    const newUser = await UserModel.create([userData], { currentSession: createSession });
 
     if (!newUser.length) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user');
@@ -37,20 +45,20 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
       userId: newUser[0]._id,
     };
     // transaction - 2
-    const createdStudent = await StudentModel.create([newStudent], { currentSession });
+    const createdStudent = await StudentModel.create([newStudent], { currentSession: createSession });
 
     if (!createdStudent.length) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student');
     }
 
-    await currentSession.commitTransaction();
-    await currentSession.endSession();
+    await createSession.commitTransaction();
+    await createSession.endSession();
 
     return createdStudent;
-  } catch (error: any) {
-    await currentSession.abortTransaction();
-    await currentSession.endSession();
-    throw new Error(error);
+  } catch{
+    await createSession.abortTransaction();
+    await createSession.endSession();
+    throw new Error("Failed to create Student");
   }
 };
 
