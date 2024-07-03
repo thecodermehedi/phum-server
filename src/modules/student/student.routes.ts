@@ -9,8 +9,12 @@ router.get('/', StudentControllers.getStudents);
 
 router.get('/:studentId', StudentControllers.getStudent);
 
-router.patch('/:studentId', validateRequest(studentValidations.updateStudentValidationSchema), StudentControllers.updateStudent);
+router.patch(
+  '/:studentId',
+  validateRequest(studentValidations.updateStudentValidationSchema),
+  StudentControllers.updateStudent,
+);
 
-router.delete('/:studentId', StudentControllers.deleteStudent)
+router.delete('/:studentId', StudentControllers.deleteStudent);
 
 export const StudentRoutes = router;

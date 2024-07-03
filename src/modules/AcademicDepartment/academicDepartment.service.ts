@@ -8,7 +8,8 @@ const createAcademicDepartmentIntoDB = async (payload: TAcademicDepartment) => {
 const getAcademicDepartmentFromDB = (departmentId: string) =>
   AcademicDepartmentModel.findById(departmentId).populate('academicFaculty');
 
-const getAcademicFacultiesFromDB = () => AcademicDepartmentModel.find().populate('academicFaculty');
+const getAcademicFacultiesFromDB = () =>
+  AcademicDepartmentModel.find().populate('academicFaculty');
 
 const updateAcademicDepartmentFromDB = async (
   departmentId: string,

@@ -51,12 +51,10 @@ const createStudentValidationSchema = z.object({
   }),
 });
 
-
-
 export const updateStudentValidationSchema = z.object({
   body: z.object({
     student: z.object({
-      name: fullNameValidationSchema.partial(),
+      name: fullNameValidationSchema.partial().optional(),
       gender: z.enum(Genders as [string, ...string[]]).optional(),
       dateOfBirth: z.string().optional(),
       email: z.string().email().optional(),
@@ -65,17 +63,16 @@ export const updateStudentValidationSchema = z.object({
       bloodGroup: z.enum(BloodGroups as [string, ...string[]]).optional(),
       presentAddress: z.string().optional(),
       permanentAddress: z.string().optional(),
-      guardian: guardianValidationSchema.partial(),
-      localGuardian: localGuardianValidationSchema.partial(),
+      guardian: guardianValidationSchema.partial().optional(),
+      localGuardian: localGuardianValidationSchema.partial().optional(),
       admissionSemester: z.string().optional(),
       academicDepartment: z.string().optional(),
       profileImg: z.string().optional(),
-    })
+    }),
   }),
 });
 
-
 export const studentValidations = {
   createStudentValidationSchema,
-  updateStudentValidationSchema
+  updateStudentValidationSchema,
 };

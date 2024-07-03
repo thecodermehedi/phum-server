@@ -5,62 +5,77 @@ import { TStudent } from './student.types';
 import { mongoose } from '../../utils';
 import UserModel from '../User/user.model';
 
-const getStudentsFromDB = () => StudentModel.find({ isDeleted: false }).populate('userId').populate('admissionSemester').populate({
-  path: 'academicDepartment',
-  populate: {
-    path: 'academicFaculty'
-  }
-});
+const getStudentsFromDB = () => StudentModel.find({ isDeleted: false });
+// .populate('userId')
+// .populate('admissionSemester')
+// .populate({
+//   path: 'academicDepartment',
+//   populate: {
+//     path: 'academicFaculty',
+//   },
+// });
 
 const getStudentFromDB = (studentId: string) => {
-  return StudentModel.findOne({ id: studentId, isDeleted: false }).populate('userId').populate('admissionSemester').populate({
-    path: 'academicDepartment',
-    populate: {
-      path: 'academicFaculty'
-    }
-  });
-}
+  return StudentModel.findOne({ id: studentId, isDeleted: false });
+  // .populate('userId')
+  // .populate('admissionSemester')
+  // .populate({
+  //   path: 'academicDepartment',
+  //   populate: {
+  //     path: 'academicFaculty',
+  //   },
+  // });
+};
 
-
-const updateStudentFromDB = async (studentId: string, payload: TStudent) => {
-  return await StudentModel.findOneAndUpdate({ id: studentId }, payload, { new: true })
-}
+const updateStudentFromDB = async (studentId: string, payload: Partial<TStudent>) => {
+  return await StudentModel.findOneAndUpdate(
+    { id: studentId, isDeleted: false },
+    payload,
+    { new: true },
+  );
+};
 
 const deleteStudentFromDB = async (studentId: string) => {
-  const currentSession = await mongoose.startSession()
+  const currentSession = await mongoose.startSession();
   try {
-    currentSession.startTransaction()
+    currentSession.startTransaction();
 
-    const isStudentDeleted = StudentModel.findOneAndUpdate({ id: studentId, isDeleted: false }, { isDeleted: true }, { new: true, currentSession })
+    const isStudentDeleted = StudentModel.findOneAndUpdate(
+      { id: studentId, isDeleted: false },
+      { isDeleted: true },
+      { new: true, currentSession },
+    );
 
     if (!isStudentDeleted) {
-      throw new AppError(httpStatus.BAD_REQUEST, "Student was not deleted successfully");
+      throw new AppError(httpStatus.BAD_REQUEST, 'Student was not deleted successfully');
     }
 
-    const isUserDeleted = UserModel.findOneAndUpdate({ id: studentId, isDeleted: false }, { isDeleted: true }, { new: true, currentSession });
+    const isUserDeleted = UserModel.findOneAndUpdate(
+      { id: studentId, isDeleted: false },
+      { isDeleted: true },
+      { new: true, currentSession },
+    );
 
     if (!isUserDeleted) {
-      throw new AppError(httpStatus.BAD_REQUEST, "User was not deleted successfully");
+      throw new AppError(httpStatus.BAD_REQUEST, 'User was not deleted successfully');
     }
 
-    await currentSession.commitTransaction()
-    await currentSession.endSession()
+    await currentSession.commitTransaction();
+    await currentSession.endSession();
 
-    return isStudentDeleted
-
+    return isStudentDeleted;
   } catch (error: any) {
     await currentSession.abortTransaction();
-    await currentSession.endSession()
-    throw new Error(error)
+    await currentSession.endSession();
+    throw new Error(error);
   }
-
-}
+};
 
 export const StudentServices = {
   getStudentsFromDB,
   getStudentFromDB,
   updateStudentFromDB,
-  deleteStudentFromDB
+  deleteStudentFromDB,
 };
 
 /*
