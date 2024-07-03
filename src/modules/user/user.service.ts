@@ -10,14 +10,24 @@ import AppError from '../../errors/AppError';
 import { AcademicDepartmentModel } from '../AcademicDepartment/academicDepartment.model';
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
-  const isAdmissionSemesterExists = await AcademicSemesterModel.findById(payload.admissionSemester);
+  const isAdmissionSemesterExists = await AcademicSemesterModel.findById(
+    payload.admissionSemester,
+  );
   if (!isAdmissionSemesterExists) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Admission Semester was not found in the database')
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'Admission Semester was not found in the database',
+    );
   }
 
-  const isAcademicDepartmentExists = await AcademicDepartmentModel.findById(payload.academicDepartment);
+  const isAcademicDepartmentExists = await AcademicDepartmentModel.findById(
+    payload.academicDepartment,
+  );
   if (!isAcademicDepartmentExists) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Academic Department was not found in the database')
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'Academic Department was not found in the database',
+    );
   }
 
   const createSession = await mongoose.startSession();
@@ -45,7 +55,9 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
       userId: newUser[0]._id,
     };
     // transaction - 2
-    const createdStudent = await StudentModel.create([newStudent], { currentSession: createSession });
+    const createdStudent = await StudentModel.create([newStudent], {
+      currentSession: createSession,
+    });
 
     if (!createdStudent.length) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student');
@@ -55,10 +67,10 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     await createSession.endSession();
 
     return createdStudent;
-  } catch{
+  } catch {
     await createSession.abortTransaction();
     await createSession.endSession();
-    throw new Error("Failed to create Student");
+    throw new Error('Failed to create Student');
   }
 };
 

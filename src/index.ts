@@ -57,7 +57,7 @@ app.use(globalErrorHandler);
       console.log(`👟 Server is running on ${port} (${nodeEnv} mode)`);
     });
   } catch (error) {
-    console.error(error)
-    throw new Error("😈 Error connecting to the database");
+    console.error(error);
+    throw new Error('😈 Error connecting to the database');
   }
 })();
