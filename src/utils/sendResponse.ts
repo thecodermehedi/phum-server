@@ -1,18 +1,18 @@
-import { Response } from '.';
+// This file sends success responses to client
 
-type TResponse<T> = {
-  statusCode: number;
-  success: boolean;
-  message?: string;
-  data: T;
-};
+import { Request, Response } from '.';
+import config from '../config';
+import { TResponse } from '../types';
+import getCurrentDateTime from './getCurrentDateTime';
 
-const sendResponse = <T>(res: Response, data: TResponse<T>) => {
-  res.status(data?.statusCode).json({
-    success: data?.success,
-    message: data?.message,
-    data: data?.data,
-  });
+const sendResponse = <T>(req: Request, res: Response, data: TResponse<T>) => {
+    res.status(data.code).json({
+      status: data.status ?? 'unknown',
+      message: data.message ?? 'No message provided',
+      data: data.data ?? {},
+ ...(config.nodeEnv !== 'production' ? { debugInfo: {method: req.method ?? 'no method provided', url: req.url ?? 'no url provided'} } : {}),      timestamp: getCurrentDateTime(),
+
+    });
 };
 
 export default sendResponse;
