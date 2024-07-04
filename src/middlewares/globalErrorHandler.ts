@@ -9,6 +9,7 @@ import handleZodError from '../errors/handleZodError';
 import { TErrorObject, TResponse } from '../types';
 import getCurrentDateTime from '../utils/getCurrentDateTime';
 import config from '../config';
+import handleValidationError from '../errors/handleValidationError';
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   let statusCode: number = httpStatus.INTERNAL_SERVER_ERROR;
@@ -18,14 +19,22 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   if (err instanceof ZodError) {
     const simplifiedError = handleZodError(err)
     statusCode = simplifiedError.code;
-    statusMessage = simplifiedError.message;
+    statusMessage = config.nodeEnv !== 'production' ? simplifiedError.message : 'Validation Error';
     statusDetails = simplifiedError.details
-  } 
+  }
+
+  if (err.name === 'ValidationError') {
+    const simplifiedError = handleValidationError(err)
+    statusCode = simplifiedError.code;
+    statusMessage = config.nodeEnv === 'production' ? simplifiedError.message : err.message;
+    statusDetails = simplifiedError.details
+  }
 
   return res.status(statusCode).json({
     status: 'error',
     message: statusMessage,
     details: statusDetails,
+    old: err,
     timestamp: getCurrentDateTime(),
     ...(config.nodeEnv !== 'production' ? { debugInfo: { method: req.method ?? 'no method provided', url: req.url ?? 'no url provided', stack: err.stack ?? 'no stack provided' } } : {}),
   })
