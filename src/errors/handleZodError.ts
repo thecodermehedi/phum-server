@@ -1,13 +1,13 @@
 import { ZodError, ZodIssue } from 'zod';
 import { TErrorObject, TReturnError } from '../types';
-import httpStatus from 'http-status';
+import { httpStatus } from '../utils';
 const handleZodError = (err: ZodError): TReturnError => {
   return {
     code: httpStatus.BAD_REQUEST,
-    message: 'Validation Error',
+    message: err.name,
     details: err.issues.map((issue: ZodIssue): TErrorObject => {
       return {
-        path: issue?.path[issue.path.length - 1],
+        path: issue.path.join(' --> '),
         message: issue.message,
       };
     }),
