@@ -1,10 +1,13 @@
+import config from '../config';
 import { RequestHandler, httpStatus } from '../utils';
+import getCurrentDateTime from '../utils/getCurrentDateTime';
 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 const notFound: RequestHandler = (req, res, next) => {
   return res.status(httpStatus.NOT_FOUND).json({
-    sucess: false,
-    message: 'Route not found',
-    error: null,
+    status: 'error',
+    message: 'Resource not found',
+    timestamp: getCurrentDateTime(),
+    ...(config.nodeEnv !== 'production' ? { debugInfo: { method: req.method ?? 'no method provided', url: req.url ?? 'no url provided' } } : {}),
   });
 };
 
