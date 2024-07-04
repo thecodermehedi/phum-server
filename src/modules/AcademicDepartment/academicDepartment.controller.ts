@@ -8,9 +8,9 @@ const createAcademicDepartment: RequestHandler = catchAsync(async (req, res) => 
   const result = await AcademicDepartmentServices.createAcademicDepartmentIntoDB(
     req.body,
   );
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
+  sendResponse(req, res, {
+    status: 'created',
+    code: httpStatus.OK,
     message: 'Academic Department is created successfully',
     data: result,
   });
@@ -19,16 +19,15 @@ const createAcademicDepartment: RequestHandler = catchAsync(async (req, res) => 
 const getAcademicFaculties: RequestHandler = catchAsync(async (req, res) => {
   const result = await AcademicDepartmentServices.getAcademicFacultiesFromDB();
   if (!result.length) {
-    return sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
+    return sendResponse(req, res, {
+      status: 'error',
+      code: httpStatus.NOT_FOUND,
       message: 'No Academic Department found in the database',
-      data: null,
     });
   }
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
+  sendResponse(req, res, {
+    code: httpStatus.OK,
+    status: 'success',
     message: 'Academic Departments are retrieved successfully',
     data: result,
   });
@@ -37,27 +36,25 @@ const getAcademicFaculties: RequestHandler = catchAsync(async (req, res) => {
 const getAcademicDepartment: RequestHandler = catchAsync(async (req, res) => {
   const isValid = isValidObjectId(req.params.departmentId);
   if (!isValid) {
-    return sendResponse(res, {
-      statusCode: httpStatus.BAD_REQUEST,
-      success: false,
+    return sendResponse(req, res, {
+      code: httpStatus.BAD_REQUEST,
+      status: 'error',
       message: 'Academic Department Id is not valid',
-      data: null,
     });
   }
   const result = await AcademicDepartmentServices.getAcademicDepartmentFromDB(
     req.params.departmentId,
   );
   if (!result) {
-    return sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
+    return sendResponse(req, res, {
+      code: httpStatus.NOT_FOUND,
+      status: 'error',
       message: 'Academic Department is not found in the database',
-      data: null,
     });
   }
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
+  sendResponse(req, res, {
+    code: httpStatus.OK,
+    status: 'success',
     message: 'Academic Department is retrieved successfully',
     data: result,
   });
@@ -66,20 +63,19 @@ const getAcademicDepartment: RequestHandler = catchAsync(async (req, res) => {
 const updateAcademicDepartment: RequestHandler = catchAsync(async (req, res) => {
   const isValid = isValidObjectId(req.params.departmentId);
   if (!isValid) {
-    return sendResponse(res, {
-      statusCode: httpStatus.BAD_REQUEST,
-      success: false,
+    return sendResponse(req, res, {
+      code: httpStatus.BAD_REQUEST,
+      status: 'error',
       message: 'Academic Department Id is not valid',
-      data: null,
     });
   }
   const result = await AcademicDepartmentServices.updateAcademicDepartmentFromDB(
     req.params.departmentId,
     req.body,
   );
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
+  sendResponse(req, res, {
+    code: httpStatus.OK,
+    status: 'success',
     message: 'Academic Department is updated successfully',
     data: result,
   });

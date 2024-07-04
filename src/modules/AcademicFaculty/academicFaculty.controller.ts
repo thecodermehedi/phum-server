@@ -6,9 +6,9 @@ import { RequestHandler, httpStatus } from '../../utils';
 
 const createAcademicFaculty: RequestHandler = catchAsync(async (req, res) => {
   const result = await AcademicFacultyServices.createAcademicFacultyIntoDB(req.body);
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
+  sendResponse(req, res, {
+    status: 'created',
+    code: httpStatus.OK,
     message: 'Academic Faculty is created successfully',
     data: result,
   });
@@ -17,16 +17,15 @@ const createAcademicFaculty: RequestHandler = catchAsync(async (req, res) => {
 const getAcademicFaculties: RequestHandler = catchAsync(async (req, res) => {
   const result = await AcademicFacultyServices.getAcademicFacultiesFromDB();
   if (!result.length) {
-    return sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
+    return sendResponse(req, res, {
+      status: 'error',
+      code: httpStatus.NOT_FOUND,
       message: 'No Academic Faculty found in the database',
-      data: null,
     });
   }
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
+  sendResponse(req, res, {
+    status: 'success',
+    code: httpStatus.OK,
     message: 'Academic Facultlies are retrieved successfully',
     data: result,
   });
@@ -35,27 +34,25 @@ const getAcademicFaculties: RequestHandler = catchAsync(async (req, res) => {
 const getAcademicFaculty: RequestHandler = catchAsync(async (req, res) => {
   const isValid = isValidObjectId(req.params.facultyId);
   if (!isValid) {
-    return sendResponse(res, {
-      statusCode: httpStatus.BAD_REQUEST,
-      success: false,
+    return sendResponse(req, res, {
+      status: 'error',
+      code: httpStatus.BAD_REQUEST,
       message: 'Academic Faculty Id is not valid',
-      data: null,
     });
   }
   const result = await AcademicFacultyServices.getAcademicFacultyFromDB(
     req.params.facultyId,
   );
   if (!result) {
-    return sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
+    return sendResponse(req, res, {
+      status: 'error',
+      code: httpStatus.NOT_FOUND,
       message: 'Academic Faculty is not found in the database',
-      data: null,
     });
   }
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
+  sendResponse(req, res, {
+    status: 'success',
+    code: httpStatus.OK,
     message: 'Academic Faculty is retrieved successfully',
     data: result,
   });
@@ -64,20 +61,19 @@ const getAcademicFaculty: RequestHandler = catchAsync(async (req, res) => {
 const updateAcademicFaculty: RequestHandler = catchAsync(async (req, res) => {
   const isValid = isValidObjectId(req.params.facultyId);
   if (!isValid) {
-    return sendResponse(res, {
-      statusCode: httpStatus.BAD_REQUEST,
-      success: false,
+    return sendResponse(req, res, {
+      status: 'error',
+      code: httpStatus.BAD_REQUEST,
       message: 'Academic Faculty Id is not valid',
-      data: null,
     });
   }
   const result = await AcademicFacultyServices.updateAcademicFacultyFromDB(
     req.params.facultyId,
     req.body,
   );
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
+  sendResponse(req, res, {
+    status: 'success',
+    code: httpStatus.OK,
     message: 'Academic Faculty is updated successfully',
     data: result,
   });

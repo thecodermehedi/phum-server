@@ -6,16 +6,15 @@ import { StudentServices } from './student.service';
 const getStudents: RequestHandler = catchAsync(async (req, res) => {
   const result = await StudentServices.getStudentsFromDB();
   if (!result.length) {
-    return sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
+    return sendResponse(req, res, {
+      status: 'error',
+      code: httpStatus.NOT_FOUND,
       message: 'No students found in the database',
-      data: null,
     });
   }
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
+  sendResponse(req, res, {
+    status: 'success',
+    code: httpStatus.OK,
     message: 'Students are retrieved successfully',
     data: result,
   });
@@ -24,16 +23,15 @@ const getStudents: RequestHandler = catchAsync(async (req, res) => {
 const getStudent: RequestHandler = catchAsync(async (req, res) => {
   const result = await StudentServices.getStudentFromDB(req.params.studentId);
   if (!result) {
-    return sendResponse(res, {
-      statusCode: httpStatus.NOT_FOUND,
-      success: false,
+    return sendResponse(req, res, {
+      code: httpStatus.NOT_FOUND,
+      status: 'error',
       message: 'Student not found in the database',
-      data: null,
     });
   }
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
+  sendResponse(req, res, {
+    status: 'success',
+    code: httpStatus.OK,
     message: 'Student is retrieved successfully',
     data: result,
   });
@@ -45,16 +43,15 @@ const updateStudent: RequestHandler = catchAsync(async (req, res) => {
     req.body.student,
   );
   if (!result) {
-    return sendResponse(res, {
-      statusCode: httpStatus.BAD_REQUEST,
-      success: false,
-      message: 'Student is not updated succesfully',
-      data: null,
+    return sendResponse(req, res, {
+      status: 'error',
+      code: httpStatus.BAD_REQUEST,
+      message: 'Student is not updated succesfully'
     });
   }
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
+  sendResponse(req, res, {
+    status: 'success',
+    code: httpStatus.OK,
     message: 'Student is updated successfully',
     data: result,
   });
@@ -63,18 +60,16 @@ const updateStudent: RequestHandler = catchAsync(async (req, res) => {
 const deleteStudent: RequestHandler = catchAsync(async (req, res) => {
   const result = await StudentServices.deleteStudentFromDB(req.params.studentId);
   if (!result) {
-    return sendResponse(res, {
-      statusCode: httpStatus.BAD_REQUEST,
-      success: false,
+    return sendResponse(req, res, {
+      code: httpStatus.BAD_REQUEST,
+      status: 'error',
       message: 'Student is not deleted succesfully',
-      data: null,
     });
   }
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
+  sendResponse(req, res, {
+    code: httpStatus.OK,
+    status: 'no_content',
     message: 'Student is deleted successfully',
-    data: null,
   });
 });
 
