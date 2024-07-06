@@ -1,7 +1,7 @@
-import { TErrorObject, TReturnError } from "../types";
-import { httpStatus, mongoose } from "../utils";
+import { TErrorObject, TReturnError } from '../types';
+import { httpStatus, mongoose } from '../utils';
 
-type TMongooseError = mongoose.Error.ValidatorError | mongoose.Error.CastError
+type TMongooseError = mongoose.Error.ValidatorError | mongoose.Error.CastError;
 
 const handleValidationError = (err: mongoose.Error.ValidationError): TReturnError => {
   return {
@@ -13,7 +13,7 @@ const handleValidationError = (err: mongoose.Error.ValidationError): TReturnErro
         message: issue?.message,
       };
     }),
-  }
-}
+  };
+};
 
 export default handleValidationError;

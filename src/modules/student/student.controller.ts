@@ -46,7 +46,7 @@ const updateStudent: RequestHandler = catchAsync(async (req, res) => {
     return sendResponse(req, res, {
       status: 'error',
       code: httpStatus.BAD_REQUEST,
-      message: 'Student is not updated succesfully'
+      message: 'Student is not updated succesfully',
     });
   }
   sendResponse(req, res, {

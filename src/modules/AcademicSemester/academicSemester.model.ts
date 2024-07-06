@@ -45,7 +45,11 @@ AcademicSemesterSchema.pre('save', async function (next) {
     name: this.name,
   });
   if (isAcademicSemesterExists) {
-    throw new AppError(httpStatus.CONFLICT, 'Academic Semester is already exists!');
+    throw new AppError(
+      httpStatus.CONFLICT,
+      'Academic Semester is already exists!',
+      'name & year',
+    );
   }
   next();
 });
@@ -54,7 +58,7 @@ AcademicSemesterSchema.pre('findOneAndUpdate', async function (next) {
   const id = this.getQuery()._id;
   const existingDepartment = await AcademicSemesterModel.findById(id);
   if (!existingDepartment) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Academic Semester not found!');
+    throw new AppError(httpStatus.NOT_FOUND, 'Academic Semester not found!', '_id');
   }
   next();
 });

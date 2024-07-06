@@ -71,7 +71,7 @@ const updateAcademicSemester: RequestHandler = catchAsync(async (req, res) => {
     return sendResponse(req, res, {
       code: httpStatus.BAD_REQUEST,
       status: 'error',
-      message: 'Academic Semester Id is not valid'
+      message: 'Academic Semester Id is not valid',
     });
   }
   const result = await AcademicSemesterServices.updateAcademicSemesterFromDB(

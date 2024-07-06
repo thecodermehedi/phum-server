@@ -25,7 +25,11 @@ AcademicDepartmentSchema.pre('save', async function (next) {
     name: this.name,
   });
   if (isAcademicFacultyExists) {
-    throw new AppError(httpStatus.CONFLICT, 'Academic Department is already exists!');
+    throw new AppError(
+      httpStatus.CONFLICT,
+      'Academic Department is already exists!',
+      'name',
+    );
   }
   next();
 });
@@ -34,7 +38,7 @@ AcademicDepartmentSchema.pre('findOneAndUpdate', async function (next) {
   const id = this.getQuery()._id;
   const existingDepartment = await AcademicDepartmentModel.findById(id);
   if (!existingDepartment) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Academic Department not found!');
+    throw new AppError(httpStatus.NOT_FOUND, 'Academic Department not found!', '_id');
   }
 
   next();

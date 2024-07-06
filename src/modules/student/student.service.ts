@@ -57,19 +57,65 @@ const updateStudentFromDB = async (studentId: string, payload: Partial<TStudent>
   );
 };
 
+// const deleteStudentFromDB = async (studentId: string) => {
+//   const currentSession = await mongoose.startSession();
+//   try {
+//     currentSession.startTransaction();
+
+//     const isStudentDeleted = StudentModel.findOneAndUpdate(
+//       { id: studentId, isDeleted: false },
+//       { isDeleted: true },
+//       { new: true, currentSession },
+//     );
+
+//     if (!isStudentDeleted) {
+//       throw new AppError(
+//         httpStatus.BAD_REQUEST,
+//         'Student was not deleted successfully',
+//         'id',
+//       );
+//     }
+
+//     const isUserDeleted = UserModel.findOneAndUpdate(
+//       { id: studentId, isDeleted: false },
+//       { isDeleted: true },
+//       { new: true, currentSession },
+//     );
+
+//     if (!isUserDeleted) {
+//       throw new AppError(
+//         httpStatus.BAD_REQUEST,
+//         'User was not deleted successfully',
+//         'id',
+//       );
+//     }
+
+//     await currentSession.commitTransaction();
+//     await currentSession.endSession();
+
+//     return isStudentDeleted;
+//   } catch {
+//     await currentSession.abortTransaction();
+//     await currentSession.endSession();
+//     throw new Error('Failed to delete student');
+//   }
+// };
+
 const deleteStudentFromDB = async (studentId: string) => {
   const currentSession = await mongoose.startSession();
   try {
     currentSession.startTransaction();
 
-    const isStudentDeleted = StudentModel.findOneAndUpdate(
-      { id: studentId, isDeleted: false },
-      { isDeleted: true },
-      { new: true, currentSession },
+    const isStudentDeleted = StudentModel.findOneAndDelete(
+      { id: studentId }
     );
 
     if (!isStudentDeleted) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Student was not deleted successfully');
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        'Student was not deleted successfully',
+        'id',
+      );
     }
 
     const isUserDeleted = UserModel.findOneAndUpdate(
@@ -79,7 +125,11 @@ const deleteStudentFromDB = async (studentId: string) => {
     );
 
     if (!isUserDeleted) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'User was not deleted successfully');
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        'User was not deleted successfully',
+        'id',
+      );
     }
 
     await currentSession.commitTransaction();

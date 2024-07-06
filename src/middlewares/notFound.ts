@@ -7,7 +7,14 @@ const notFound: RequestHandler = (req, res, next) => {
     status: 'error',
     message: 'Resource not found',
     timestamp: getCurrentDateTime(),
-    ...(config.nodeEnv !== 'production' ? { debugInfo: { method: req.method ?? 'no method provided', url: req.url ?? 'no url provided' } } : {}),
+    ...(config.nodeEnv !== 'production'
+      ? {
+          debugInfo: {
+            method: req.method ?? 'no method provided',
+            url: req.url ?? 'no url provided',
+          },
+        }
+      : {}),
   });
 };
 

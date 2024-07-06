@@ -6,9 +6,10 @@ import notFound from './middlewares/notFound';
 import globalErrorHandler from './middlewares/globalErrorHandler';
 import { Application, Request, Response, express, mongoose } from './utils';
 import router from './routes';
+import http, { Server } from 'http';
 
 export const app: Application = express();
-
+export const server: Server = http.createServer(app);
 const { port, nodeEnv, dbUri, dbHost, dbName } = config;
 
 app.use(express.json());
@@ -25,10 +26,15 @@ app.get('/', (req: Request, res: Response) => {
   });
 });
 
-app.use('/api/v1', router);
+// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+app.get('/test', (req, res) => {
+  Promise.reject();
+});
 
+app.use('/api/v1', router);
 app.use(notFound);
 app.use(globalErrorHandler);
+
 (async () => {
   let dbStringUri: string = dbUri
     .replace('<hostname>', dbHost)
@@ -47,17 +53,34 @@ app.use(globalErrorHandler);
       console.log('🟡 Connecting...');
       await mongoose.connect(dbStringUri);
       console.log(
-        nodeEnv === 'development'
-          ? '🟢 Connected to MongoDB Compass'
-          : '🟢 Connected to MongoDB Atlas',
+        nodeEnv !== 'production'
+          ? '🟢 Connected to MongoDB Compass (dev)'
+          : '🟢 Connected to MongoDB Atlas (prod)',
       );
     }
 
-    app.listen(port, () => {
+    server.listen(port, () => {
       console.log(`👟 Server is running on ${port} (${nodeEnv} mode)`);
     });
   } catch (error) {
-    console.error(error);
+    console.error('❌ Error connecting to MongoDB:', error);
     throw new Error('😈 Error connecting to the database');
   }
 })();
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection Detected, Shutting Down...');
+  console.error('Reason:', reason);
+  if (server) {
+    server.close(() => {
+      process.exit(1);
+    });
+  }
+  process.exit(1);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception Detected: Shutting Down...');
+  console.error('Error:', error);
+  process.exit(1);
+});

@@ -10,4 +10,4 @@ const getCurrentDateTime = () => {
   return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
 };
 
-export default getCurrentDateTime
+export default getCurrentDateTime;

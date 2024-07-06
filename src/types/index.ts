@@ -1,8 +1,8 @@
-export type TStatus = 'success' | 'error' | 'created' | 'no_content'
+export type TStatus = 'success' | 'error' | 'created' | 'no_content';
 
 export type TErrorObject = {
-  path: string | number,
-  message: string
+  path: string | number;
+  message: string;
 };
 
 type TDebugInfo = {
@@ -19,11 +19,11 @@ export type TResponse<T> = {
   errorCode?: string;
   details?: Array<TErrorObject>;
   timestamp?: string;
-  debugInfo?: TDebugInfo
+  debugInfo?: TDebugInfo;
 };
 
 export type TReturnError = {
-  code: number,
-  message: string,
-  details: Array<TErrorObject>
-}
+  code: number;
+  message: string;
+  details: Array<TErrorObject>;
+};

@@ -23,7 +23,7 @@ const updateAcademicSemesterFromDB = async (
     payload.code &&
     AcademicSemesterNameCodeMapper[payload.name] !== payload.code
   ) {
-    throw new AppError(httpStatus.NOT_ACCEPTABLE, 'Invalid Semester Code');
+    throw new AppError(httpStatus.NOT_ACCEPTABLE, 'Invalid Semester Code', 'name & code');
   }
   return await AcademicSemesterModel.findByIdAndUpdate(semesterId, payload, {
     new: true,

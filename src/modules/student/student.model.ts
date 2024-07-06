@@ -72,13 +72,13 @@ const studentSchema = new Schema<TStudent>(
   {
     id: {
       type: String,
-      required: [true, 'ID is required'],
       unique: true,
+      required: [true, 'ID is required'],
     },
     userId: {
       type: Types.ObjectId,
-      required: [true, 'User id is required'],
       unique: true,
+      required: [true, 'User id is required'],
       ref: 'User',
     },
     name: {
@@ -96,8 +96,8 @@ const studentSchema = new Schema<TStudent>(
     dateOfBirth: { type: Date },
     email: {
       type: String,
-      required: [true, 'Email is required'],
       unique: true,
+      required: [true, 'Email is required'],
     },
     contactNo: { type: String, required: [true, 'Contact number is required'] },
     emergencyContactNo: {

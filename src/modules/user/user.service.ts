@@ -17,6 +17,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     throw new AppError(
       httpStatus.NOT_FOUND,
       'Admission Semester was not found in the database',
+      'admissionSemester',
     );
   }
 
@@ -27,6 +28,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     throw new AppError(
       httpStatus.NOT_FOUND,
       'Academic Department was not found in the database',
+      'academicDepartment',
     );
   }
 
@@ -46,7 +48,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     const newUser = await UserModel.create([userData], { currentSession: createSession });
 
     if (!newUser.length) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user');
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user', 'users');
     }
 
     const newStudent = {
@@ -60,7 +62,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     });
 
     if (!createdStudent.length) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student');
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student', 'students');
     }
 
     await createSession.commitTransaction();
