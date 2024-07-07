@@ -106,9 +106,7 @@ const deleteStudentFromDB = async (studentId: string) => {
   try {
     currentSession.startTransaction();
 
-    const isStudentDeleted = StudentModel.findOneAndDelete(
-      { id: studentId }
-    );
+    const isStudentDeleted = StudentModel.findOneAndDelete({ id: studentId });
 
     if (!isStudentDeleted) {
       throw new AppError(

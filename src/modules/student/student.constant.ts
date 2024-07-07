@@ -13,5 +13,4 @@ export const BloodGroups: TBloodGroup[] = [
   'O-',
 ];
 
-export const studentSearchableFields = ['email',
-  'name.firstName']
+export const studentSearchableFields = ['email', 'name.firstName'];
