@@ -9,34 +9,38 @@ class QueryBuilder<T> {
     this.query = query;
   }
   search(searchableFields: Array<string>) {
-    const search = this?.query?.serach;
+    const search = this?.query?.search;
     if (search) {
       this.modelQuery = this.modelQuery.find({
-        $or: searchableFields.map((field) => ({ [field]: { regex: search, options: 'i' } }) as mongoose.FilterQuery<T>)
-      })
-
+        $or: searchableFields.map(
+          (field) =>
+            ({ [field]: { $regex: search, $options: 'i' } }) as mongoose.FilterQuery<T>,
+        ),
+      });
     }
     return this;
   }
   filter() {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-    const queryObj = (({ search, sort, limit, page, fields, ...rest }) => rest)(this.query);
-    this.modelQuery = this.modelQuery.find(queryObj as mongoose.FilterQuery<T>)
+    const queryObj = { ...this.query }
+    const excludes = ['search', 'sort', 'limit', 'page', 'fields']
+    excludes.forEach(field => delete queryObj[field])
+    this.modelQuery = this?.modelQuery?.find(queryObj as mongoose.FilterQuery<T>);
     return this;
   }
   sort() {
-    const { sort = '-createdAt' }: { sort?: string } = this.query;
-    this.modelQuery = this.modelQuery.sort((sort).split(",").join(" "));
+    const sort = this?.query?.sort as string || '-createdAt'
+    this.modelQuery = this?.modelQuery?.sort(sort?.split(',')?.join(' '));
     return this;
   }
   paginate() {
-    const { page = 1, limit = 10 }: { page?: number, limit?: number } = this.query;
+    const page = this?.query?.page as number || 1;
+    const limit = this?.query?.limit as number || 10;
     this.modelQuery = this.modelQuery.skip((page - 1) * limit).limit(limit);
     return this;
   }
   fields() {
-    const { fields = '-__v' }: { fields?: string } = this.query;
-    this.modelQuery = this.modelQuery.select(fields.split(",").join(" "))
+    const fields = this?.query?.fields as string || '-__v';
+    this.modelQuery = this.modelQuery.select(fields.split(',').join(' '));
     return this;
   }
 }

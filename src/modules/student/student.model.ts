@@ -1,7 +1,8 @@
-import { Schema, model, Types } from '../../utils';
+import AppError from '../../errors/AppError';
+import { Schema, model, Types, httpStatus } from '../../utils';
 import { TGuardian, TLocalGuardian, TStudent, TFullName } from './student.types';
 
-const userNameSchema = new Schema<TFullName>({
+export const userNameSchema = new Schema<TFullName>({
   firstName: {
     type: String,
     required: [true, 'First Name is required'],
@@ -75,7 +76,7 @@ const studentSchema = new Schema<TStudent>(
       unique: true,
       required: [true, 'ID is required'],
     },
-    userId: {
+    user: {
       type: Types.ObjectId,
       unique: true,
       required: [true, 'User id is required'],
@@ -137,7 +138,45 @@ const studentSchema = new Schema<TStudent>(
   },
   {
     timestamps: true,
+    toJSON: {
+      virtuals: true,
+    }
   },
 );
+
+studentSchema.pre('find', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+studentSchema.pre('findOne', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+studentSchema.pre('save', async function (next) {
+  const isEmailExists = await StudentModel.findOne({
+    email: this.email,
+  });
+  if (isEmailExists) {
+    throw new AppError(httpStatus.CONFLICT, 'Email already exists!', 'email');
+  }
+  const isContactNoExists = await StudentModel.findOne({
+    contactNo: this.contactNo,
+  });
+  if (isContactNoExists) {
+    throw new AppError(httpStatus.CONFLICT, 'Contact No already exists!', 'contactNo');
+  }
+  next();
+});
+
+studentSchema.virtual('fullName').get(function () {
+  const { firstName, middleName, lastName } = this.name;
+  if (middleName) {
+    return `${firstName} ${middleName} ${lastName}`;
+  } else {
+    return `${firstName} ${lastName}`;
+  }
+});
 
 export const StudentModel = model<TStudent>('Student', studentSchema);

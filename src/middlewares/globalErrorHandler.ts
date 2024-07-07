@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -61,9 +60,6 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     errorMessage = err.message;
     errorDetails = [{ path: '', message: err.message }];
   }
-
-  console.error(`Unhandled error: ${err.message}`);
-  console.error(err.stack);
 
   return res.status(errorCode).json({
     status: 'error',

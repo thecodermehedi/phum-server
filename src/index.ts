@@ -73,6 +73,7 @@ process.on('unhandledRejection', (reason) => {
   console.error('Reason:', reason);
   if (server) {
     server.close(() => {
+      mongoose.disconnect();
       process.exit(1);
     });
   }
@@ -82,5 +83,6 @@ process.on('unhandledRejection', (reason) => {
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception Detected: Shutting Down...');
   console.error('Error:', error);
+  mongoose.disconnect();
   process.exit(1);
 });

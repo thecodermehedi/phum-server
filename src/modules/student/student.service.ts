@@ -1,30 +1,37 @@
-import httpStatus from 'http-status';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import AppError from '../../errors/AppError';
 import { StudentModel } from './student.model';
 import { TStudent } from './student.types';
-import { mongoose } from '../../utils';
+import { httpStatus, mongoose } from '../../utils';
 import UserModel from '../User/user.model';
+import QueryBuilder from '../../builder/QueryBuilder';
+import { studentSearchableFields } from './student.constant';
 
-const getStudentsFromDB = () => StudentModel.find({ isDeleted: false });
-// .populate('userId')
-// .populate('admissionSemester')
-// .populate({
-//   path: 'academicDepartment',
-//   populate: {
-//     path: 'academicFaculty',
-//   },
-// });
+const getStudentsFromDB = async (query: Record<string, unknown>) => {
+  const queryModel = StudentModel.find().populate('user')
+    .populate('admissionSemester')
+    .populate({
+      path: 'academicDepartment',
+      populate: {
+        path: 'academicFaculty',
+      },
+    })
+  const studentQuery = new QueryBuilder(queryModel, query);
+  const finalQuery = studentQuery.search(studentSearchableFields).filter().sort().paginate().fields()
+  return await finalQuery.modelQuery
+
+}
+
 
 const getStudentFromDB = (studentId: string) => {
-  return StudentModel.findOne({ id: studentId, isDeleted: false });
-  // .populate('userId')
-  // .populate('admissionSemester')
-  // .populate({
-  //   path: 'academicDepartment',
-  //   populate: {
-  //     path: 'academicFaculty',
-  //   },
-  // });
+  return StudentModel.findOne({ id: studentId }).populate('user')
+    .populate('admissionSemester')
+    .populate({
+      path: 'academicDepartment',
+      populate: {
+        path: 'academicFaculty',
+      },
+    });
 };
 
 const updateStudentFromDB = async (studentId: string, payload: Partial<TStudent>) => {
@@ -57,58 +64,16 @@ const updateStudentFromDB = async (studentId: string, payload: Partial<TStudent>
   );
 };
 
-// const deleteStudentFromDB = async (studentId: string) => {
-//   const currentSession = await mongoose.startSession();
-//   try {
-//     currentSession.startTransaction();
-
-//     const isStudentDeleted = StudentModel.findOneAndUpdate(
-//       { id: studentId, isDeleted: false },
-//       { isDeleted: true },
-//       { new: true, currentSession },
-//     );
-
-//     if (!isStudentDeleted) {
-//       throw new AppError(
-//         httpStatus.BAD_REQUEST,
-//         'Student was not deleted successfully',
-//         'id',
-//       );
-//     }
-
-//     const isUserDeleted = UserModel.findOneAndUpdate(
-//       { id: studentId, isDeleted: false },
-//       { isDeleted: true },
-//       { new: true, currentSession },
-//     );
-
-//     if (!isUserDeleted) {
-//       throw new AppError(
-//         httpStatus.BAD_REQUEST,
-//         'User was not deleted successfully',
-//         'id',
-//       );
-//     }
-
-//     await currentSession.commitTransaction();
-//     await currentSession.endSession();
-
-//     return isStudentDeleted;
-//   } catch {
-//     await currentSession.abortTransaction();
-//     await currentSession.endSession();
-//     throw new Error('Failed to delete student');
-//   }
-// };
-
-const deleteStudentFromDB = async (studentId: string) => {
+const softDeleteStudentFromDB = async (studentId: string) => {
+  let isUpdated: boolean = false;
   const currentSession = await mongoose.startSession();
   try {
     currentSession.startTransaction();
 
-    const isStudentDeleted = StudentModel.findOneAndDelete(
-      { id: studentId }
-    );
+    const isStudentDeleted = await StudentModel.findOneAndUpdate(
+      { id: studentId },
+      { $set: { isDeleted: true } },
+    ).session(currentSession);
 
     if (!isStudentDeleted) {
       throw new AppError(
@@ -118,11 +83,10 @@ const deleteStudentFromDB = async (studentId: string) => {
       );
     }
 
-    const isUserDeleted = UserModel.findOneAndUpdate(
-      { id: studentId, isDeleted: false },
-      { isDeleted: true },
-      { new: true, currentSession },
-    );
+    const isUserDeleted = await UserModel.findOneAndUpdate(
+      { id: studentId },
+      { $set: { isDeleted: true } },
+    ).session(currentSession);
 
     if (!isUserDeleted) {
       throw new AppError(
@@ -133,13 +97,57 @@ const deleteStudentFromDB = async (studentId: string) => {
     }
 
     await currentSession.commitTransaction();
-    await currentSession.endSession();
-
-    return isStudentDeleted;
-  } catch {
+    isUpdated = true;
+    return isUpdated;
+  } catch (error: any) {
     await currentSession.abortTransaction();
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      error.message,
+      'Failed to delete student',
+    );
+  } finally {
     await currentSession.endSession();
-    throw new Error('Failed to delete student');
+  }
+};
+
+const hardDeleteStudentFromDB = async (studentId: string) => {
+  let isDeleted: boolean = false;
+  const currentSession = await mongoose.startSession();
+  try {
+    currentSession.startTransaction();
+    const isStudentDeleted = await StudentModel.findOneAndDelete({
+      id: studentId,
+    }).session(currentSession);
+    if (!isStudentDeleted) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        'Student was not deleted successfully',
+        'id',
+      );
+    }
+    const isUserDeleted = await UserModel.findOneAndDelete({ id: studentId }).session(
+      currentSession,
+    );
+    if (!isUserDeleted) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        'User was not deleted successfully',
+        'id',
+      );
+    }
+    isDeleted = true;
+    await currentSession.commitTransaction();
+    return isDeleted;
+  } catch (error: any) {
+    await currentSession.abortTransaction();
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      error.message,
+      'Failed to delete student',
+    );
+  } finally {
+    await currentSession.endSession();
   }
 };
 
@@ -147,7 +155,8 @@ export const StudentServices = {
   getStudentsFromDB,
   getStudentFromDB,
   updateStudentFromDB,
-  deleteStudentFromDB,
+  softDeleteStudentFromDB,
+  hardDeleteStudentFromDB,
 };
 
 /*
