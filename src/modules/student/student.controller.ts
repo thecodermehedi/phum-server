@@ -4,7 +4,7 @@ import catchAsync from '../../utils/catchAsync';
 import { StudentServices } from './student.service';
 
 const getStudents: RequestHandler = catchAsync(async (req, res) => {
-  const result = await StudentServices.getStudentsFromDB();
+  const result = await StudentServices.getStudentsFromDB(req.query);
   if (!result.length) {
     return sendResponse(req, res, {
       status: 'error',
@@ -57,8 +57,23 @@ const updateStudent: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
-const deleteStudent: RequestHandler = catchAsync(async (req, res) => {
-  const result = await StudentServices.deleteStudentFromDB(req.params.studentId);
+const softDeleteStudent: RequestHandler = catchAsync(async (req, res) => {
+  const result = await StudentServices.softDeleteStudentFromDB(req.params.studentId);
+  if (!result) {
+    return sendResponse(req, res, {
+      code: httpStatus.BAD_REQUEST,
+      status: 'error',
+      message: 'Student is not deleted succesfully',
+    });
+  }
+  sendResponse(req, res, {
+    code: httpStatus.OK,
+    status: 'no_content',
+    message: 'Student is deleted successfully',
+  });
+});
+const hardDeleteStudent: RequestHandler = catchAsync(async (req, res) => {
+  const result = await StudentServices.hardDeleteStudentFromDB(req.params.studentId);
   if (!result) {
     return sendResponse(req, res, {
       code: httpStatus.BAD_REQUEST,
@@ -77,5 +92,6 @@ export const StudentControllers = {
   getStudents,
   getStudent,
   updateStudent,
-  deleteStudent,
+  softDeleteStudent,
+  hardDeleteStudent,
 };

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import config from '../../config';
 import { TUser } from './user.types';
 import UserModel from './user.model';
@@ -32,11 +33,11 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     );
   }
 
-  const createSession = await mongoose.startSession();
+  const currentSession = await mongoose.startSession();
 
   try {
-    // start transaction
-    createSession.startTransaction();
+    let isCreated: boolean = false;
+    currentSession.startTransaction();
 
     const userData: Partial<TUser> = {
       id: await generateStudentId(isAdmissionSemesterExists),
@@ -44,8 +45,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
       password: password || config.defaultPassword,
     };
 
-    // transaction - 1
-    const newUser = await UserModel.create([userData], { currentSession: createSession });
+    const newUser = await UserModel.create([userData], { currentSession });
 
     if (!newUser.length) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user', 'users');
@@ -54,25 +54,27 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     const newStudent = {
       ...payload,
       id: newUser[0].id,
-      userId: newUser[0]._id,
+      user: newUser[0]._id,
     };
-    // transaction - 2
-    const createdStudent = await StudentModel.create([newStudent], {
-      currentSession: createSession,
-    });
+
+    const createdStudent = await StudentModel.create([newStudent], { currentSession });
 
     if (!createdStudent.length) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student', 'students');
     }
 
-    await createSession.commitTransaction();
-    await createSession.endSession();
-
-    return createdStudent;
-  } catch {
-    await createSession.abortTransaction();
-    await createSession.endSession();
-    throw new Error('Failed to create Student');
+    await currentSession.commitTransaction();
+    isCreated = true;
+    return { isCreated, createdStudent };
+  } catch (error: any) {
+    await currentSession.abortTransaction();
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      error.message,
+      'Failed to create student',
+    );
+  } finally {
+    await currentSession.endSession();
   }
 };
 
