@@ -1,9 +1,9 @@
 import { model, Schema } from '../../utils';
 import { BloodGroups, Genders } from '../student/student.constant';
 import { userNameSchema } from '../student/student.model';
-import { TFaculty } from './faculty.types';
+import { TAdmin } from './admin.types';
 
-const FacultySchema = new Schema<TFaculty>(
+const AdminSchema = new Schema<TAdmin>(
   {
     id: {
       type: String,
@@ -59,11 +59,6 @@ const FacultySchema = new Schema<TFaculty>(
       required: [true, 'Permanent address is required'],
     },
     profileImg: { type: String },
-    academicDepartment: {
-      type: Schema.Types.ObjectId,
-      required: [true, 'User id is required'],
-      ref: 'AcademicDepartment',
-    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -76,18 +71,18 @@ const FacultySchema = new Schema<TFaculty>(
   },
 );
 
-FacultySchema.virtual('fullName').get(function () {
+AdminSchema.virtual('fullName').get(function () {
   return this?.name?.firstName + '' + this?.name?.middleName + '' + this?.name?.lastName;
 });
 
-FacultySchema.pre('find', function (next) {
+AdminSchema.pre('find', function (next) {
   this.find({ isDeleted: { $ne: true } });
   next();
 });
 
-FacultySchema.pre('findOne', function (next) {
+AdminSchema.pre('findOne', function (next) {
   this.find({ isDeleted: { $ne: true } });
   next();
 });
 
-export const FacultyModel = model<TFaculty>('Faculty', FacultySchema);
+export const AdminModel = model<TAdmin>('Admin', AdminSchema);

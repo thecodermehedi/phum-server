@@ -1,7 +1,7 @@
 import { ObjectId } from '../../utils';
 import { TBloodGroup, TFullName, TGender } from '../student/student.types';
 
-export type TFaculty = {
+export type TAdmin = {
   id: string;
   user: ObjectId;
   designation: string;
@@ -15,6 +15,5 @@ export type TFaculty = {
   presentAddress: string;
   permanentAddress: string;
   profileImg?: string;
-  academicDepartment: ObjectId;
   isDeleted: boolean;
 };

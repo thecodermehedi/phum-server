@@ -5,16 +5,15 @@ const createAcademicFacultyIntoDB = async (payload: TAcademicFaculty) => {
   return await AcademicFacultyModel.create(payload);
 };
 
-const getAcademicFacultyFromDB = (facultyId: string) =>
-  AcademicFacultyModel.findById(facultyId);
+const getAcademicFacultyFromDB = (id: string) => AcademicFacultyModel.findById(id);
 
 const getAcademicFacultiesFromDB = () => AcademicFacultyModel.find();
 
 const updateAcademicFacultyFromDB = async (
-  facultyId: string,
+  id: string,
   payload: Partial<TAcademicFaculty>,
 ) => {
-  return await AcademicFacultyModel.findByIdAndUpdate(facultyId, payload, { new: true });
+  return await AcademicFacultyModel.findByIdAndUpdate(id, payload, { new: true });
 };
 
 export const AcademicFacultyServices = {

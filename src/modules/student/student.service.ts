@@ -8,23 +8,28 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import { studentSearchableFields } from './student.constant';
 
 const getStudentsFromDB = async (query: Record<string, unknown>) => {
-  const queryModel = StudentModel.find().populate('user')
+  const queryModel = StudentModel.find()
+    .populate('user')
     .populate('admissionSemester')
     .populate({
       path: 'academicDepartment',
       populate: {
         path: 'academicFaculty',
       },
-    })
+    });
   const studentQuery = new QueryBuilder(queryModel, query);
-  const finalQuery = studentQuery.search(studentSearchableFields).filter().sort().paginate().fields()
-  return await finalQuery.modelQuery
-
-}
-
+  const finalQuery = studentQuery
+    .search(studentSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  return await finalQuery.modelQuery;
+};
 
 const getStudentFromDB = (studentId: string) => {
-  return StudentModel.findOne({ id: studentId }).populate('user')
+  return StudentModel.findOne({ id: studentId })
+    .populate('user')
     .populate('admissionSemester')
     .populate({
       path: 'academicDepartment',
@@ -158,15 +163,3 @@ export const StudentServices = {
   softDeleteStudentFromDB,
   hardDeleteStudentFromDB,
 };
-
-/*
-These mongoose method is asyncronus by nature
-find(): Used to retrieve documents from a collection.
-findOne(): Finds a single document in the collection.
-findById(): Finds a single document by its _id field.
-save(): Saves a document instance to the database.
-updateOne(): Updates a single document in the collection.
-deleteOne(): Deletes a single document in the collection.
-aggregate(): Performs aggregation operations on the collection data.
-countDocuments(): Counts the number of documents that match a query.
-*/

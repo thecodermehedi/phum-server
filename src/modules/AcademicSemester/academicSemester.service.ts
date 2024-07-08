@@ -9,13 +9,13 @@ const createAcademicSemesterIntoDB = async (payload: TAcademicSemester) => {
   return await AcademicSemesterModel.create(payload);
 };
 
-const getAcademicSemesterFromDB = async (semesterId: string) =>
-  AcademicSemesterModel.findById(semesterId);
+const getAcademicSemesterFromDB = async (id: string) =>
+  AcademicSemesterModel.findById(id);
 
 const getAcademicSemestersFromDB = () => AcademicSemesterModel.find();
 
 const updateAcademicSemesterFromDB = async (
-  semesterId: string,
+  id: string,
   payload: Partial<TAcademicSemester>,
 ) => {
   if (
@@ -25,7 +25,7 @@ const updateAcademicSemesterFromDB = async (
   ) {
     throw new AppError(httpStatus.NOT_ACCEPTABLE, 'Invalid Semester Code', 'name & code');
   }
-  return await AcademicSemesterModel.findByIdAndUpdate(semesterId, payload, {
+  return await AcademicSemesterModel.findByIdAndUpdate(id, payload, {
     new: true,
   });
 };

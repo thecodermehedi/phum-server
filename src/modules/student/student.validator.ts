@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { BloodGroups, Genders } from './student.constant';
 
-const fullNameValidationSchema = z.object({
+export const nameValidationSchema = z.object({
   firstName: z
     .string()
     .min(1)
@@ -33,7 +33,7 @@ const createStudentValidationSchema = z.object({
   body: z.object({
     password: z.string().max(20),
     student: z.object({
-      name: fullNameValidationSchema,
+      name: nameValidationSchema,
       gender: z.enum(Genders as [string, ...string[]]),
       dateOfBirth: z.string().optional(),
       email: z.string().email(),
@@ -54,7 +54,7 @@ const createStudentValidationSchema = z.object({
 export const updateStudentValidationSchema = z.object({
   body: z.object({
     student: z.object({
-      name: fullNameValidationSchema.partial().optional(),
+      name: nameValidationSchema.partial().optional(),
       gender: z.enum(Genders as [string, ...string[]]).optional(),
       dateOfBirth: z.string().optional(),
       email: z.string().email().optional(),
@@ -72,7 +72,7 @@ export const updateStudentValidationSchema = z.object({
   }),
 });
 
-export const studentValidations = {
+export const StudentValidations = {
   createStudentValidationSchema,
   updateStudentValidationSchema,
 };

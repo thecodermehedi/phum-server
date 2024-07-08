@@ -5,17 +5,17 @@ const createAcademicDepartmentIntoDB = async (payload: TAcademicDepartment) => {
   return await AcademicDepartmentModel.create(payload);
 };
 
-const getAcademicDepartmentFromDB = (departmentId: string) =>
-  AcademicDepartmentModel.findById(departmentId).populate('academicFaculty');
+const getAcademicDepartmentFromDB = (id: string) =>
+  AcademicDepartmentModel.findById(id).populate('academicFaculty');
 
-const getAcademicFacultiesFromDB = () =>
+const getAcademicDepartmentsFromDB = () =>
   AcademicDepartmentModel.find().populate('academicFaculty');
 
 const updateAcademicDepartmentFromDB = async (
-  departmentId: string,
+  id: string,
   payload: Partial<TAcademicDepartment>,
 ) => {
-  return await AcademicDepartmentModel.findByIdAndUpdate(departmentId, payload, {
+  return await AcademicDepartmentModel.findByIdAndUpdate(id, payload, {
     new: true,
   });
 };
@@ -23,6 +23,6 @@ const updateAcademicDepartmentFromDB = async (
 export const AcademicDepartmentServices = {
   createAcademicDepartmentIntoDB,
   getAcademicDepartmentFromDB,
-  getAcademicFacultiesFromDB,
+  getAcademicDepartmentsFromDB,
   updateAcademicDepartmentFromDB,
 };
