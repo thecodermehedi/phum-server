@@ -28,7 +28,7 @@ const updateFacultyIntoDB = async (id: string, payload: Partial<TFaculty>) => {
   let modifiedPayload: Record<string, unknown> = {};
   if (payload?.name) {
     const { name, ...rest } = payload;
-    modifiedPayload = { ...rest }
+    modifiedPayload = { ...rest };
     if (Object.keys(name).length) {
       for (const [key, value] of Object.entries(name)) {
         modifiedPayload[`name.${key}`] = value;

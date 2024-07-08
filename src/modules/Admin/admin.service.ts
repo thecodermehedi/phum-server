@@ -24,7 +24,7 @@ const updateAdminIntoDB = async (id: string, payload: Partial<TAdmin>) => {
   let modifiedPayload: Record<string, unknown> = {};
   if (payload?.name) {
     const { name, ...rest } = payload;
-    modifiedPayload = { ...rest }
+    modifiedPayload = { ...rest };
     if (Object.keys(name).length) {
       for (const [key, value] of Object.entries(name)) {
         modifiedPayload[`name.${key}`] = value;
@@ -46,7 +46,7 @@ const softDeleteAdminFromDB = async (id: string) => {
     const deletedAdmin = await AdminModel.findByIdAndUpdate(
       id,
       { isDeleted: true },
-      { new: true }
+      { new: true },
     ).session(currentSession);
 
     if (!deletedAdmin) {
@@ -55,7 +55,7 @@ const softDeleteAdminFromDB = async (id: string) => {
     const deletedUser = await UserModel.findByIdAndUpdate(
       deletedAdmin.user,
       { isDeleted: true },
-      { new: true }
+      { new: true },
     ).session(currentSession);
     if (!deletedUser) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete user', 'admin user');

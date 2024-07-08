@@ -11,10 +11,10 @@ const findLastStudentId = async () => {
   )?.id;
   return lastStudentId
     ? {
-      year: lastStudentId.substring(0, 4),
-      code: lastStudentId.substring(4, 6),
-      suffixId: lastStudentId.substring(6),
-    }
+        year: lastStudentId.substring(0, 4),
+        code: lastStudentId.substring(4, 6),
+        suffixId: lastStudentId.substring(6),
+      }
     : undefined;
 };
 
@@ -51,7 +51,9 @@ export const generateFacultyId = async () => {
 // AdminId Format -->: A-0000
 const findLastAdminId = async () => {
   const lastAdminId = (
-    await UserModel.findOne({ role: 'admin' }, { id: 1, _id: 0 }).sort({ createdAt: -1 }).lean()
+    await UserModel.findOne({ role: 'admin' }, { id: 1, _id: 0 })
+      .sort({ createdAt: -1 })
+      .lean()
   )?.id;
   return lastAdminId ? Number(lastAdminId.substring(2)) : undefined;
 };
