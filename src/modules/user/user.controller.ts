@@ -18,7 +18,7 @@ const createStudent: RequestHandler = catchAsync(async (req, res) => {
   }
   sendResponse(req, res, {
     status: 'created',
-    code: httpStatus.OK,
+    code: httpStatus.CREATED,
     message: 'Student is created successfully',
     data: result.createdStudent,
   });
@@ -37,7 +37,7 @@ const createFaculty: RequestHandler = catchAsync(async (req, res) => {
   }
   sendResponse(req, res, {
     status: 'created',
-    code: httpStatus.OK,
+    code: httpStatus.CREATED,
     message: 'Faculty is created successfully',
     data: result.createdFaculty,
   });
@@ -54,7 +54,7 @@ const createAdmin: RequestHandler = catchAsync(async (req, res) => {
   }
   sendResponse(req, res, {
     status: 'created',
-    code: httpStatus.OK,
+    code: httpStatus.CREATED,
     message: 'Admin is created successfully',
     data: result.createdAdmin,
   });

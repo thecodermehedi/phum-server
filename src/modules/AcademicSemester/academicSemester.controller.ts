@@ -22,7 +22,7 @@ const createAcademicSemester: RequestHandler = catchAsync(async (req, res) => {
     );
   }
   sendResponse(req, res, {
-    code: httpStatus.OK,
+    code: httpStatus.CREATED,
     status: 'created',
     message: 'Academic Semister is created successfully',
     data: result,
