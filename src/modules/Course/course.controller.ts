@@ -7,7 +7,11 @@ import { CourseServices } from './course.service';
 const createCourse: RequestHandler = catchAsync(async (req, res) => {
   const result = await CourseServices.createCourseIntoDB(req.body);
   if (!result) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Course is not created successfully', 'courses');
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Course is not created successfully',
+      'courses',
+    );
   }
   sendResponse(req, res, {
     status: 'success',
@@ -20,7 +24,11 @@ const createCourse: RequestHandler = catchAsync(async (req, res) => {
 const getCourses: RequestHandler = catchAsync(async (req, res) => {
   const result = await CourseServices.getCoursesFromDB(req.query);
   if (!result.length) {
-    throw new AppError(httpStatus.NOT_FOUND, 'No courses found in the database', 'courses');
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'No courses found in the database',
+      'courses',
+    );
   }
   sendResponse(req, res, {
     status: 'success',
@@ -33,7 +41,11 @@ const getCourses: RequestHandler = catchAsync(async (req, res) => {
 const getCourse: RequestHandler = catchAsync(async (req, res) => {
   const result = await CourseServices.getCourseFromDB(req.params.id);
   if (!result) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Course not found in the database', 'courses');
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'Course not found in the database',
+      'courses',
+    );
   }
   sendResponse(req, res, {
     status: 'success',
@@ -46,7 +58,11 @@ const getCourse: RequestHandler = catchAsync(async (req, res) => {
 const updateCourse: RequestHandler = catchAsync(async (req, res) => {
   const result = await CourseServices.updateCourseIntoDB(req.params.id, req.body);
   if (!result) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Course is not updated successfully', 'courses');
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Course is not updated successfully',
+      'courses',
+    );
   }
   sendResponse(req, res, {
     status: 'success',
@@ -59,12 +75,42 @@ const updateCourse: RequestHandler = catchAsync(async (req, res) => {
 const deleteCourse: RequestHandler = catchAsync(async (req, res) => {
   const result = await CourseServices.deleteCourseFromDB(req.params.id);
   if (!result) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Course is not deleted successfully', 'courses');
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Course is not deleted successfully',
+      'courses',
+    );
   }
   sendResponse(req, res, {
     status: 'success',
     code: httpStatus.OK,
     message: 'Course is deleted successfully',
+    data: result,
+  });
+});
+
+const assignFacultiesWithCourse = catchAsync(async (req, res) => {
+  const result = await CourseServices.assignFacultiesWithCourseIntoDB(
+    req.params?.courseId,
+    req.body?.faculties,
+  );
+  sendResponse(req, res, {
+    code: httpStatus.OK,
+    status: 'success',
+    message: 'Faculties assigned  succesfully',
+    data: result,
+  });
+});
+
+const removeFacultiesFromCourse = catchAsync(async (req, res) => {
+  const result = await CourseServices.removeFacultiesFromCourseFromDB(
+    req.params?.courseId,
+    req.body?.faculties,
+  );
+  sendResponse(req, res, {
+    code: httpStatus.OK,
+    status: 'success',
+    message: 'Faculties removed  succesfully',
     data: result,
   });
 });
@@ -75,4 +121,6 @@ export const CourseControllers = {
   getCourse,
   updateCourse,
   deleteCourse,
+  assignFacultiesWithCourse,
+  removeFacultiesFromCourse,
 };

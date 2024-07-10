@@ -5,7 +5,11 @@ import { CourseValidations } from './course.validator';
 
 const router = createRouter();
 
-router.post('/create-course', validateRequest(CourseValidations.createCourseValidationSchema), CourseControllers.createCourse)
+router.post(
+  '/create-course',
+  validateRequest(CourseValidations.createCourseValidationSchema),
+  CourseControllers.createCourse,
+);
 
 router.get('/', CourseControllers.getCourses);
 
@@ -15,6 +19,18 @@ router.patch(
   '/:id',
   validateRequest(CourseValidations.updateCourseValidationSchema),
   CourseControllers.updateCourse,
+);
+
+router.put(
+  '/:courseId/assign-faculties',
+  validateRequest(CourseValidations.facultiesWithCourseValidationSchema),
+  CourseControllers.assignFacultiesWithCourse,
+);
+
+router.delete(
+  '/:courseId/remove-faculties',
+  validateRequest(CourseValidations.facultiesWithCourseValidationSchema),
+  CourseControllers.removeFacultiesFromCourse,
 );
 
 router.delete('/:id', CourseControllers.deleteCourse);

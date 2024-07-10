@@ -1,5 +1,5 @@
-import { model, Schema, Types } from "../../utils";
-import { TCourse, TPreRequisiteCourse } from "./course.types";
+import { model, Schema, Types } from '../../utils';
+import { TCourse, TCoursefaculty, TPreRequisiteCourse } from './course.types';
 
 const preRequisiteCoursesSchema = new Schema<TPreRequisiteCourse>(
   {
@@ -46,4 +46,23 @@ const CourseSchema = new Schema<TCourse>({
   },
 });
 
-export const CourseModel = model<TCourse>('Course', CourseSchema)
+export const CourseModel = model<TCourse>('Course', CourseSchema);
+
+const CourseFacultySchema = new Schema<TCoursefaculty>({
+  course: {
+    type: Types.ObjectId,
+    ref: 'Course',
+    unique: true,
+  },
+  faculties: [
+    {
+      type: Types.ObjectId,
+      ref: 'Faculty',
+    },
+  ],
+});
+
+export const CourseFacultyModel = model<TCoursefaculty>(
+  'CourseFaculty',
+  CourseFacultySchema,
+);
