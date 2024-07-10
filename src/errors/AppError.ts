@@ -2,7 +2,7 @@ class AppError extends Error {
   constructor(
     public code: number,
     message: string,
-    public path: string,
+    public path?: string,
     stack?: string,
   ) {
     super(message);
