@@ -1,25 +1,33 @@
+import validateRequest from "../../middlewares/validateRequest";
+import createRouter from "../../utils/createRouter";
+import { SemesterRegistrationControllers } from "./semesterRegistration.controller";
+import { SemesterRegistrationValidations } from "./semesterRegistration.validator";
+
+const router = createRouter();
+
 router.post(
   '/create-semester-registration',
   validateRequest(
     SemesterRegistrationValidations.createSemesterRegistrationValidationSchema,
   ),
-  SemesterRegistrationController.createSemesterRegistration,
+  SemesterRegistrationControllers.createSemesterRegistration,
 );
 
-router.get('/:id', SemesterRegistrationController.getSingleSemesterRegistration);
+router.get('/', SemesterRegistrationControllers.getSemesterRegistrations);
+
+router.get('/:id', SemesterRegistrationControllers.getSemesterRegistration);
 
 router.patch(
   '/:id',
   validateRequest(
-    SemesterRegistrationValidations.upadateSemesterRegistrationValidationSchema,
+    SemesterRegistrationValidations.updateSemesterRegistrationValidationSchema,
   ),
-  SemesterRegistrationController.updateSemesterRegistration,
+  SemesterRegistrationControllers.updateSemesterRegistration,
 );
 
-router.get('/:id', SemesterRegistrationController.getSingleSemesterRegistration);
+router.get('/:id', SemesterRegistrationControllers.getSemesterRegistration);
 
-router.delete('/:id', SemesterRegistrationController.deleteSemesterRegistration);
+router.delete('/:id', SemesterRegistrationControllers.deleteSemesterRegistration);
 
-router.get('/', SemesterRegistrationController.getAllSemesterRegistrations);
 
 export const semesterRegistrationRoutes = router;

@@ -5,19 +5,11 @@ import { SemesterRegistrationModel } from "./semesterRegistration.model";
 import { TSemesterRegistration } from "./semesterRegistration.types";
 import AcademicSemesterModel from "../AcademicSemester/AcademicSemester.model";
 import QueryBuilder from "../../builder/QueryBuilder";
+import { mongoose } from "../../utils";
 
 const createSemesterRegistrationIntoDB = async (payload: TSemesterRegistration) => {
 
-  /**
-   * Step1: Check if there any registered semester that is already 'UPCOMING'|'ONGOING'
-   * Step2: Check if the semester is exist
-   * Step3: Check if the semester is already registered!
-   * Step4: Create the semester registration
-   */
-
-  const academicSemester = payload?.academicSemester;
-
-  //check if there any registered semester that is already 'UPCOMING'|'ONGOING'
+  //? Check if there any registered semester that is already 'UPCOMING'|'ONGOING'
   const isThereAnyUpcomingOrOngoingSEmester = await SemesterRegistrationModel.findOne({
     $or: [
       { status: RegistrationStatus.UPCOMING },
@@ -31,177 +23,96 @@ const createSemesterRegistrationIntoDB = async (payload: TSemesterRegistration) 
       `There is aready an ${isThereAnyUpcomingOrOngoingSEmester.status} registered semester !`,
     );
   }
-  // check if the semester is exist
-  const isAcademicSemesterExists = await AcademicSemesterModel.findById(academicSemester);
 
-  if (!isAcademicSemesterExists) {
-    throw new AppError(httpStatus.NOT_FOUND, 'This academic semester not found !');
-  }
+  //? Check if the semester is exist
+  const isAcademicSemesterExists = await AcademicSemesterModel.findById(payload?.academicSemester);
+  if (!isAcademicSemesterExists) throw new AppError(httpStatus.NOT_FOUND, 'This academic semester not found !');
 
-  // check if the semester is already registered!
-  const isSemesterRegistrationExists = await SemesterRegistrationModel.findOne({
-    academicSemester,
-  });
+  //? Check if the semester is already registered!
+  const isSemesterRegistrationExists = await SemesterRegistrationModel.findOne({ academicSemester: payload.academicSemester });
+  if (isSemesterRegistrationExists) throw new AppError(httpStatus.CONFLICT, 'This semester is already registered!');
 
-  if (isSemesterRegistrationExists) {
-    throw new AppError(httpStatus.CONFLICT, 'This semester is already registered!');
-  }
+  //? Create the semester registration
+  return await SemesterRegistrationModel.create(payload);
 
-  const result = await SemesterRegistrationModel.create(payload);
-  return result;
 };
 
 const getSemesterRegistrationsFromDB = async (query: Record<string, unknown>) => {
-  const semesterRegistrationQuery = new QueryBuilder(
-    SemesterRegistrationModel.find().populate('academicSemester'),
-    query,
-  )
-    .filter()
-    .sort()
-    .paginate()
-    .fields();
-
-  const result = await semesterRegistrationQuery.modelQuery;
-  return result;
+  const queryModel = SemesterRegistrationModel.find().populate('academicSemester');
+  const semesterRegistrationQuery = new QueryBuilder(queryModel, query)
+  const finalQuery = semesterRegistrationQuery.filter().sort().paginate().fields()
+  return await finalQuery.modelQuery;
 };
 
 const getSemesterRegistrationFromDB = async (id: string) => {
-  const result = await SemesterRegistrationModel.findById(id);
-
-  return result;
+  return await SemesterRegistrationModel.findById(id);
 };
 
 const updateSemesterRegistrationIntoDB = async (
   id: string,
   payload: Partial<TSemesterRegistration>,
 ) => {
-  /**
-   * Step1: Check if the semester is exist
-   * Step2: Check if the requested registered semester is exists
-   * Step3: If the requested semester registration is ended, we will not update anything
-   * Step4: If the requested semester registration is 'UPCOMING', we will let update everything.
-   * Step5: If the requested semester registration is 'ONGOING', we will not update anything  except status to 'ENDED'
-   * Step6: If the requested semester registration is 'ENDED' , we will not update anything
-   *
-   * UPCOMING --> ONGOING --> ENDED
-   *
-   */
 
-  // check if the requested registered semester is exists
-  // check if the semester is already registered!
+  //? Check if the requested semester registration exists
   const isSemesterRegistrationExists = await SemesterRegistrationModel.findById(id);
+  if (!isSemesterRegistrationExists) throw new AppError(httpStatus.NOT_FOUND, 'This semester is not found !');
 
-  if (!isSemesterRegistrationExists) {
-    throw new AppError(httpStatus.NOT_FOUND, 'This semester is not found !');
-  }
-
-  //if the requested semester registration is ended , we will not update anything
-  const currentSemesterStatus = isSemesterRegistrationExists?.status;
+  //? Get the current status and requested status
+  const currentStatus = isSemesterRegistrationExists?.status;
   const requestedStatus = payload?.status;
 
-  if (currentSemesterStatus === RegistrationStatus.ENDED) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      `This semester is already ${currentSemesterStatus}`,
-    );
-  }
+  //? Handle case where the semester is already ended
+  if (currentStatus === RegistrationStatus.ENDED) throw new AppError(httpStatus.BAD_REQUEST, `This semester is already ${currentStatus}`);
 
-  // UPCOMING --> ONGOING --> ENDED
-  if (
-    currentSemesterStatus === RegistrationStatus.UPCOMING &&
-    requestedStatus === RegistrationStatus.ENDED
-  ) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      `You can not directly change status from ${currentSemesterStatus} to ${requestedStatus}`,
-    );
-  }
+  //? Check for invalid status transitions
+  const invalidTransitionMsg = `You cannot directly change status from ${currentStatus} to ${requestedStatus}`;
+  if ((currentStatus === RegistrationStatus.UPCOMING && requestedStatus === RegistrationStatus.ENDED) || (currentStatus === RegistrationStatus.ONGOING && requestedStatus === RegistrationStatus.UPCOMING)) throw new AppError(httpStatus.BAD_REQUEST, invalidTransitionMsg);
 
-  if (
-    currentSemesterStatus === RegistrationStatus.ONGOING &&
-    requestedStatus === RegistrationStatus.UPCOMING
-  ) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      `You can not directly change status from ${currentSemesterStatus} to ${requestedStatus}`,
-    );
-  }
-
-  const result = await SemesterRegistrationModel.findByIdAndUpdate(id, payload, {
-    new: true,
-    runValidators: true,
-  });
-
-  return result;
+  //? Update the semester registration and return the result
+  return await SemesterRegistrationModel.findByIdAndUpdate(id, payload, { new: true, runValidators: true });
 };
 
 const deleteSemesterRegistrationFromDB = async (id: string) => {
-  /**
-  * Step1: Delete associated offered courses.
-  * Step2: Delete semester registraton when the status is
-  'UPCOMING'.
-  **/
 
-  // checking if the semester registration is exist
+  //? Check if the semester registration exists
   const isSemesterRegistrationExists = await SemesterRegistrationModel.findById(id);
 
-  if (!isSemesterRegistrationExists) {
-    throw new AppError(httpStatus.NOT_FOUND, 'This registered semester is not found !');
-  }
+  if (!isSemesterRegistrationExists) throw new AppError(httpStatus.NOT_FOUND, 'This registered semester is not found !');
 
-  // checking if the status is still "UPCOMING"
+  //? Get the current status of the semester registration
   const semesterRegistrationStatus = isSemesterRegistrationExists.status;
 
-  if (semesterRegistrationStatus !== 'UPCOMING') {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      `You can not update as the registered semester is ${semesterRegistrationStatus}`,
-    );
-  }
+  //? Ensure the semester registration status is 'UPCOMING' for update
+  if (semesterRegistrationStatus !== 'UPCOMING') throw new AppError(httpStatus.BAD_REQUEST, `You can not update as the registered semester is ${semesterRegistrationStatus}`);
 
-  const session = await mongoose.startSession();
-
-  //deleting associated offered courses
+  //? Start a new session for deleting the semester registration
+  const deleteSession = await mongoose.startSession();
 
   try {
-    session.startTransaction();
+    //? Start a transaction within the session
+    deleteSession.startTransaction();
 
-    const deletedOfferedCourse = await OfferedCourse.deleteMany(
-      {
-        semesterRegistration: id,
-      },
-      {
-        session,
-      },
-    );
+    //? Delete associated offered courses with the session
+    const deletedOfferedCourse = await OfferedCourseModel.deleteMany({ semesterRegistration: id }).session(deleteSession);
 
-    if (!deletedOfferedCourse) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        'Failed to delete semester registration !',
-      );
-    }
+    if (!deletedOfferedCourse) throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete associated offered courses !');
 
-    const deletedSemisterRegistration = await SemesterRegistrationModel.findByIdAndDelete(id, {
-      session,
-      new: true,
-    });
+    //? Delete the semester registration with the session
+    const deletedSemesterRegistration = await SemesterRegistrationModel.findByIdAndDelete(id, { new: true }).session(deleteSession);
 
-    if (!deletedSemisterRegistration) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        'Failed to delete semester registration !',
-      );
-    }
+    if (!deletedSemesterRegistration) throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete semester registration !');
 
-    await session.commitTransaction();
-    await session.endSession();
-
+    //? Commit the transaction and return null
+    await deleteSession.commitTransaction();
     return null;
-  } catch (err: any) {
-    await session.abortTransaction();
-    await session.endSession();
-    throw new Error(err);
+    
+  } catch (error: any) {
+    //? In case of an error, abort the transaction and throw an error
+    await deleteSession.abortTransaction();
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, error.message, 'An error occurred while deleting semester registration');
+  } finally {
+    //? End the session after completion
+    await deleteSession.endSession();
   }
 };
 

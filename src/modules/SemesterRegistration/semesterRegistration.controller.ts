@@ -69,7 +69,7 @@ const deleteSemesterRegistration: RequestHandler = catchAsync(async (req, res) =
   });
 });
 
-export const SemesterRegistrationController = {
+export const SemesterRegistrationControllers = {
   createSemesterRegistration,
   getSemesterRegistrations,
   getSemesterRegistration,
