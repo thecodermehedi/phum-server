@@ -26,11 +26,6 @@ app.get('/', (req: Request, res: Response) => {
   });
 });
 
-// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-app.get('/test', (req, res) => {
-  Promise.reject();
-});
-
 app.use('/api/v1', router);
 app.use(notFound);
 app.use(globalErrorHandler);
@@ -60,7 +55,7 @@ app.use(globalErrorHandler);
     }
 
     server.listen(port, () => {
-      console.log(`👟 Server is running on ${port} (${nodeEnv} mode)`);
+      console.log(`🗄️ Server is running on ${port} (${nodeEnv} mode)`);
     });
   } catch (error) {
     console.error('❌ Error connecting to MongoDB:', error);
@@ -71,7 +66,7 @@ app.use(globalErrorHandler);
 process.on('unhandledRejection', (reason) => {
   console.error('Unhandled Rejection Detected, Shutting Down...');
   console.error('Reason:', reason);
-  if (server) {
+  if (Server) {
     server.close(() => {
       mongoose.disconnect();
       process.exit(1);
@@ -83,6 +78,11 @@ process.on('unhandledRejection', (reason) => {
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception Detected: Shutting Down...');
   console.error('Error:', error);
-  mongoose.disconnect();
+  if (Server) {
+    server.close(() => {
+      mongoose.disconnect();
+      process.exit(1);
+    });
+  }
   process.exit(1);
 });

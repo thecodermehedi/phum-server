@@ -2,7 +2,6 @@ import { TOfferedCourse } from './offeredCourse.types';
 import { model, Schema } from '../../utils';
 import { EDays } from './offeredCourse.constant';
 
-
 const OfferedCourseSchema = new Schema<TOfferedCourse>(
   {
     semesterRegistration: {

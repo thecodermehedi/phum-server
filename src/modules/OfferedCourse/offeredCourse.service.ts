@@ -1,14 +1,15 @@
-import { httpStatus, ObjectId } from "../../utils";
-import AppError from "../../errors/AppError";
-import { TOfferedCourse } from "./offeredCourse.types";
-import { SemesterRegistrationModel } from "../SemesterRegistration/semesterRegistration.model";
-import { AcademicDepartmentModel } from "../AcademicDepartment/academicDepartment.model";
-import { CourseModel } from "../Course/course.model";
-import { FacultyModel } from "../Faculty/faculty.model";
-import { OfferedCourseModel } from "./offeredCourse.model";
-import { hasTimeConflict } from "./offeredCourse.utils";
-import { AcademicFacultyModel } from "../AcademicFaculty/academicFaculty.model";
-import QueryBuilder from "../../builder/QueryBuilder";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { httpStatus, ObjectId } from '../../utils';
+import AppError from '../../errors/AppError';
+import { TOfferedCourse } from './offeredCourse.types';
+import { SemesterRegistrationModel } from '../SemesterRegistration/semesterRegistration.model';
+import { AcademicDepartmentModel } from '../AcademicDepartment/academicDepartment.model';
+import { CourseModel } from '../Course/course.model';
+import { FacultyModel } from '../Faculty/faculty.model';
+import { OfferedCourseModel } from './offeredCourse.model';
+import { hasTimeConflict } from './offeredCourse.utils';
+import { AcademicFacultyModel } from '../AcademicFaculty/academicFaculty.model';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
   const {
@@ -32,36 +33,65 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
   };
 
   //? Check if required documents exist
-  await checkIfExists(SemesterRegistrationModel, semesterRegistration, 'Semester registration not found !');
-  await checkIfExists(AcademicFacultyModel, academicFaculty, 'Academic Faculty not found !');
-  await checkIfExists(AcademicDepartmentModel, academicDepartment, 'Academic Department not found !');
+  await checkIfExists(
+    SemesterRegistrationModel,
+    semesterRegistration,
+    'Semester registration not found !',
+  );
+  await checkIfExists(
+    AcademicFacultyModel,
+    academicFaculty,
+    'Academic Faculty not found !',
+  );
+  await checkIfExists(
+    AcademicDepartmentModel,
+    academicDepartment,
+    'Academic Department not found !',
+  );
   await checkIfExists(CourseModel, course, 'Course not found !');
   await checkIfExists(FacultyModel, faculty, 'Faculty not found !');
 
   //? Check if the academic department belongs to the specified faculty inline
-  if (!await AcademicDepartmentModel.findOne({ _id: academicDepartment, academicFaculty })) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'This department does not belong to this faculty');
+  if (
+    !(await AcademicDepartmentModel.findOne({ _id: academicDepartment, academicFaculty }))
+  ) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'This department does not belong to this faculty',
+    );
   }
 
   //? Check for existing offered course with the same section
   if (await OfferedCourseModel.findOne({ semesterRegistration, course, section })) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Offered course with same section already exists!');
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Offered course with same section already exists!',
+    );
   }
 
   //? Check for time conflicts with assigned schedules
-  const assignedSchedules = await OfferedCourseModel.find({ semesterRegistration, faculty, days: { $in: days } }).select('days startTime endTime');
+  const assignedSchedules = await OfferedCourseModel.find({
+    semesterRegistration,
+    faculty,
+    days: { $in: days },
+  }).select('days startTime endTime');
   if (hasTimeConflict(assignedSchedules, { days, startTime, endTime })) {
-    throw new AppError(httpStatus.CONFLICT, 'This faculty is not available at that time! Choose another time or day');
+    throw new AppError(
+      httpStatus.CONFLICT,
+      'This faculty is not available at that time! Choose another time or day',
+    );
   }
 
   //? Create and return the OfferedCourse document
-  const academicSemester = (await SemesterRegistrationModel.findById(semesterRegistration))?.academicSemester;
+  const academicSemester = (
+    await SemesterRegistrationModel.findById(semesterRegistration)
+  )?.academicSemester;
   return OfferedCourseModel.create({ ...payload, academicSemester });
 };
 
 const getOfferedCoursesFromDB = async (query: Record<string, unknown>) => {
-  const queryModel = OfferedCourseModel.find()
-  const offeredCourseQuery = new QueryBuilder(queryModel, query)
+  const queryModel = OfferedCourseModel.find();
+  const offeredCourseQuery = new QueryBuilder(queryModel, query);
   const finalQuery = offeredCourseQuery.filter().sort().paginate().fields();
   return await finalQuery.modelQuery;
 };
@@ -89,7 +119,6 @@ const updateOfferedCourseIntoDB = async (
 
   const semesterRegistration = isOfferedCourseExists.semesterRegistration;
   // get the schedules of the faculties
-
 
   // Checking the status of the semester registration
   const semesterRegistrationStatus =

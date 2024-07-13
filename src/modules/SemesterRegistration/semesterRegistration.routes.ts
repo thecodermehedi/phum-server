@@ -1,7 +1,7 @@
-import validateRequest from "../../middlewares/validateRequest";
-import createRouter from "../../utils/createRouter";
-import { SemesterRegistrationControllers } from "./semesterRegistration.controller";
-import { SemesterRegistrationValidations } from "./semesterRegistration.validator";
+import validateRequest from '../../middlewares/validateRequest';
+import createRouter from '../../utils/createRouter';
+import { SemesterRegistrationControllers } from './semesterRegistration.controller';
+import { SemesterRegistrationValidations } from './semesterRegistration.validator';
 
 const router = createRouter();
 
@@ -28,6 +28,5 @@ router.patch(
 router.get('/:id', SemesterRegistrationControllers.getSemesterRegistration);
 
 router.delete('/:id', SemesterRegistrationControllers.deleteSemesterRegistration);
-
 
 export const semesterRegistrationRoutes = router;

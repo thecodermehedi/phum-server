@@ -1,7 +1,7 @@
-import { httpStatus, RequestHandler } from "../../utils";
-import catchAsync from "../../utils/catchAsync";
-import sendResponse from "../../utils/sendResponse";
-import { SemesterRegistrationService } from "./semesterRegistration.service";
+import { httpStatus, RequestHandler } from '../../utils';
+import catchAsync from '../../utils/catchAsync';
+import sendResponse from '../../utils/sendResponse';
+import { SemesterRegistrationService } from './semesterRegistration.service';
 
 const createSemesterRegistration: RequestHandler = catchAsync(async (req, res) => {
   const result = await SemesterRegistrationService.createSemesterRegistrationIntoDB(
@@ -31,8 +31,7 @@ const getSemesterRegistrations: RequestHandler = catchAsync(async (req, res) => 
 const getSemesterRegistration: RequestHandler = catchAsync(async (req, res) => {
   const { id } = req.params;
 
-  const result =
-    await SemesterRegistrationService.getSemesterRegistrationFromDB(id);
+  const result = await SemesterRegistrationService.getSemesterRegistrationFromDB(id);
 
   sendResponse(req, res, {
     code: httpStatus.OK,
