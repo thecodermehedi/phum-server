@@ -50,6 +50,20 @@
  ┃ ┃ ┃ ┣ 📜admin.service.ts
  ┃ ┃ ┃ ┣ 📜admin.types.ts
  ┃ ┃ ┃ ┗ 📜admin.validator.ts
+ ┃ ┃ ┣ 📂Auth
+ ┃ ┃ ┃ ┣ 📜auth.controller.ts
+ ┃ ┃ ┃ ┣ 📜auth.routes.ts
+ ┃ ┃ ┃ ┣ 📜auth.service.ts
+ ┃ ┃ ┃ ┣ 📜auth.types.ts
+ ┃ ┃ ┃ ┗ 📜auth.validator.ts
+ ┃ ┃ ┣ 📂Course
+ ┃ ┃ ┃ ┣ 📜course.constant.ts
+ ┃ ┃ ┃ ┣ 📜course.controller.ts
+ ┃ ┃ ┃ ┣ 📜course.model.ts
+ ┃ ┃ ┃ ┣ 📜course.routes.ts
+ ┃ ┃ ┃ ┣ 📜course.service.ts
+ ┃ ┃ ┃ ┣ 📜course.types.ts
+ ┃ ┃ ┃ ┗ 📜course.validator.ts
  ┃ ┃ ┣ 📂Faculty
  ┃ ┃ ┃ ┣ 📜faculty.constant.ts
  ┃ ┃ ┃ ┣ 📜faculty.controller.ts
@@ -58,6 +72,23 @@
  ┃ ┃ ┃ ┣ 📜faculty.service.ts
  ┃ ┃ ┃ ┣ 📜faculty.types.ts
  ┃ ┃ ┃ ┗ 📜faculty.validator.ts
+ ┃ ┃ ┣ 📂OfferedCourse
+ ┃ ┃ ┃ ┣ 📜offeredCourse.constant.ts
+ ┃ ┃ ┃ ┣ 📜offeredCourse.controller.ts
+ ┃ ┃ ┃ ┣ 📜offeredCourse.model.ts
+ ┃ ┃ ┃ ┣ 📜offeredCourse.routes.ts
+ ┃ ┃ ┃ ┣ 📜offeredCourse.service.ts
+ ┃ ┃ ┃ ┣ 📜offeredCourse.types.ts
+ ┃ ┃ ┃ ┣ 📜offeredCourse.utils.ts
+ ┃ ┃ ┃ ┗ 📜offeredCourse.validator.ts
+ ┃ ┃ ┣ 📂SemesterRegistration
+ ┃ ┃ ┃ ┣ 📜semesterRegistration.constant.ts
+ ┃ ┃ ┃ ┣ 📜semesterRegistration.controller.ts
+ ┃ ┃ ┃ ┣ 📜semesterRegistration.model.ts
+ ┃ ┃ ┃ ┣ 📜semesterRegistration.routes.ts
+ ┃ ┃ ┃ ┣ 📜semesterRegistration.service.ts
+ ┃ ┃ ┃ ┣ 📜semesterRegistration.types.ts
+ ┃ ┃ ┃ ┗ 📜semesterRegistration.validator.ts
  ┃ ┃ ┣ 📂Student
  ┃ ┃ ┃ ┣ 📜student.constant.ts
  ┃ ┃ ┃ ┣ 📜student.controller.ts
