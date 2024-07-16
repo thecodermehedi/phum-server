@@ -7,8 +7,8 @@ const loginUserValidationSchema = z.object({
       invalid_type_error: "ID must be a string",
     }),
     password: z.string({
-      required_error: "Password is required",
-      invalid_type_error: "Password must be a string",
+      required_error: "PASSWORD is required",
+      invalid_type_error: "PASSWORD must be a string",
     })
   })
 })
