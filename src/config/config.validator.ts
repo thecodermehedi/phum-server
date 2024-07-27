@@ -10,6 +10,7 @@ const configValidation = z.object({
   dbPass: z.string().optional(),
   defaultPassword: z.string().default('phuniapi@admin'),
   bcrypt_salt_rounds: z.number().default(12),
+  jwtSecret: z.string()
 });
 
 export default configValidation;
