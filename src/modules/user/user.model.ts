@@ -1,9 +1,9 @@
 import bcrypt from 'bcrypt';
 import { Schema, model } from '../../utils';
-import { TUser } from './user.types';
+import { IUser, TUser } from './user.types';
 import config from '../../config';
 
-const userSchema = new Schema<TUser>(
+const userSchema = new Schema<TUser, IUser>(
   {
     id: {
       type: String,
@@ -13,8 +13,9 @@ const userSchema = new Schema<TUser>(
     password: {
       type: String,
       required: true,
-      select: 0
+      select: 0,
     },
+    passwordChangedAt: { type: Date, default: "1970-01-01"},
     needsPasswordChange: {
       type: Boolean,
       default: true,
@@ -38,6 +39,8 @@ const userSchema = new Schema<TUser>(
   },
 );
 
+
+
 userSchema.pre('save', async function (next) {
   const user = this as TUser;
   user.password = await bcrypt.hash(user.password, config.bcrypt_salt_rounds);
@@ -49,6 +52,19 @@ userSchema.post('save', function (doc, next) {
   next();
 });
 
-const UserModel = model<TUser>('User', userSchema);
+userSchema.statics.isUserExistsByCustomId = async function (id: string) {
+  return await UserModel.findOne({ id }).select('+password');
+};
+
+userSchema.statics.isPasswordMatched = async function (
+  plainTextPassword,
+  hashedPassword,
+) {
+  return await bcrypt.compare(plainTextPassword, hashedPassword);
+};
+
+const UserModel = model<TUser, IUser>('User', userSchema);
 
 export default UserModel;
+
+

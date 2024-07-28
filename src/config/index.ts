@@ -13,7 +13,9 @@ const rawConfig = {
   ...(process.env.BCRYPT_SALT_ROUNDS?.trim()
     ? { bcrypt_salt_rounds: Number(process.env.BCRYPT_SALT_ROUNDS) }
     : {}),
-  ...(process.env.JWT_ACCESS_SECRET?.trim() ? { jwtSecret: process.env.JWT_ACCESS_SECRET } : {})
+  ...(process.env.JWT_ACCESS_SECRET?.trim()
+    ? { jwtSecret: process.env.JWT_ACCESS_SECRET }
+    : {}),
 };
 
 const config: TConfig = configValidation.parse(rawConfig);

@@ -23,10 +23,10 @@ const changePasswordValidationSchema = z.object({
       required_error: 'NEW PASSWORD is required',
       invalid_type_error: 'NEW PASSWORD must be a string',
     }),
-  })
-})
+  }),
+});
 
 export const AuthValidation = {
   loginUserValidationSchema,
-  changePasswordValidationSchema
+  changePasswordValidationSchema,
 };
