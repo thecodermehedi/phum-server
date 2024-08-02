@@ -3,4 +3,4 @@ export type TLoginUser = {
   password: string;
 };
 
-export type TChangePasswordPayload = { oldPassword: string; newPassword: string }
+export type TChangePasswordPayload = { oldPassword: string; newPassword: string };

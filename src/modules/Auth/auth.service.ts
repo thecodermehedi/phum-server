@@ -8,7 +8,7 @@ import bcrypt from 'bcrypt';
 
 const loginUser = async (payload: TLoginUser) => {
   //? Check if the user exists
-  const user = await UserModel.isUserExistsByCustomId(payload.id)
+  const user = await UserModel.isUserExistsByCustomId(payload.id);
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User does not exists');
   }
@@ -40,7 +40,7 @@ const loginUser = async (payload: TLoginUser) => {
 
 const changePassword = async (userData: JwtPayload, payload: TChangePasswordPayload) => {
   ///? Check if the user exists
-  const user = await UserModel.isUserExistsByCustomId(userData.userId)
+  const user = await UserModel.isUserExistsByCustomId(userData.userId);
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User does not exists');
   }
@@ -61,13 +61,23 @@ const changePassword = async (userData: JwtPayload, payload: TChangePasswordPayl
   }
 
   //? Hash newPassword using bcrypt
-  const newHashedPassword = await bcrypt.hash(payload.newPassword, config.bcrypt_salt_rounds)
+  const newHashedPassword = await bcrypt.hash(
+    payload.newPassword,
+    config.bcrypt_salt_rounds,
+  );
 
   //? Updating Password
-  return await UserModel.findOneAndUpdate({ id: userData.userid, role: userData.role }, { password: newHashedPassword, needsPasswordChange: false, passwordChangedAt: new Date() })
+  return await UserModel.findOneAndUpdate(
+    { id: userData.userid, role: userData.role },
+    {
+      password: newHashedPassword,
+      needsPasswordChange: false,
+      passwordChangedAt: new Date(),
+    },
+  );
 };
 
-const refreshToken = () => { };
+const refreshToken = () => {};
 
 export const AuthServices = {
   loginUser,

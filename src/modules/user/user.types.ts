@@ -18,8 +18,7 @@ export interface IUser extends Model<TUser> {
   //instance methods for checking if the user exist
   isUserExistsByCustomId(id: string): Promise<TUser>;
   //instance methods for checking if passwords are matched
-  isPasswordMatched(
-    plainTextPassword: string,
-    hashedPassword: string,
-  ): Promise<boolean>;
+  isPasswordMatched(plainTextPassword: string, hashedPassword: string): Promise<boolean>;
+  //
+  isTokenIssuedBeforePasswordChange(passwordChangedTimestamp: Date, tokenIssudedTimestamp: number): boolean;
 }

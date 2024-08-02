@@ -15,7 +15,7 @@ const userSchema = new Schema<TUser, IUser>(
       required: true,
       select: 0,
     },
-    passwordChangedAt: { type: Date, default: "1970-01-01"},
+    passwordChangedAt: { type: Date, default: '1970-01-01' },
     needsPasswordChange: {
       type: Boolean,
       default: true,
@@ -39,8 +39,6 @@ const userSchema = new Schema<TUser, IUser>(
   },
 );
 
-
-
 userSchema.pre('save', async function (next) {
   const user = this as TUser;
   user.password = await bcrypt.hash(user.password, config.bcrypt_salt_rounds);
@@ -52,19 +50,15 @@ userSchema.post('save', function (doc, next) {
   next();
 });
 
-userSchema.statics.isUserExistsByCustomId = async function (id: string) {
-  return await UserModel.findOne({ id }).select('+password');
-};
+userSchema.statics.isUserExistsByCustomId = async (id: string) => await UserModel.findOne({ id }).select('+password');
 
-userSchema.statics.isPasswordMatched = async function (
+userSchema.statics.isPasswordMatched = async(
   plainTextPassword,
   hashedPassword,
-) {
-  return await bcrypt.compare(plainTextPassword, hashedPassword);
-};
+)=> await bcrypt.compare(plainTextPassword, hashedPassword);
+
+// userSchema.statics.isTokenIssuedBeforePasswordChange = (passwordChangedTimestamp: Date, tokenIssudedTimestamp: number) =>
 
 const UserModel = model<TUser, IUser>('User', userSchema);
 
 export default UserModel;
-
-
