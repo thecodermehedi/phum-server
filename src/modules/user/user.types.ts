@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
 import { Model } from 'mongoose';
 import { USER_ROLE } from './user.constant';
@@ -20,5 +21,8 @@ export interface IUser extends Model<TUser> {
   //instance methods for checking if passwords are matched
   isPasswordMatched(plainTextPassword: string, hashedPassword: string): Promise<boolean>;
   //
-  isTokenIssuedBeforePasswordChange(passwordChangedTimestamp: Date, tokenIssudedTimestamp: number): boolean;
+  isTokenIssuedBeforePasswordChange(
+    passwordChangedTimestamp: Date,
+    tokenIssudedTimestamp: number,
+  ): boolean;
 }

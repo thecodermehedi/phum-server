@@ -5,6 +5,7 @@ import { TChangePasswordPayload, TLoginUser } from './auth.types';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../../config';
 import bcrypt from 'bcrypt';
+import { createToken } from './auth.utils';
 
 const loginUser = async (payload: TLoginUser) => {
   //? Check if the user exists
@@ -30,10 +31,19 @@ const loginUser = async (payload: TLoginUser) => {
 
   //? Generate Token
   const jwtPayload = { userId: user?.id, role: user?.role };
-  const accessToken = jwt.sign(jwtPayload, config.jwtSecret, { expiresIn: '10d' });
-
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwtAccessSecret,
+    config.jwtAccessExpiresIn,
+  );
+  const refreshToken = createToken(
+    jwtPayload,
+    config.jwtRefreshSecret,
+    config.jwtRefreshExpiresIn,
+  );
   return {
     accessToken,
+    refreshToken,
     needsPasswordChange: user.needsPasswordChange,
   };
 };
@@ -77,7 +87,29 @@ const changePassword = async (userData: JwtPayload, payload: TChangePasswordPayl
   );
 };
 
-const refreshToken = () => {};
+const refreshToken = async (token: string) => {
+  const decoded = jwt.verify(token, config.jwtAccessSecret) as JwtPayload;
+  const user = await UserModel.isUserExistsByCustomId(decoded.userId);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+  }
+  if (user?.isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'User is deleted');
+  }
+  if (user?.status === 'blocked') {
+    throw new AppError(httpStatus.FORBIDDEN, 'User is blocked');
+  }
+  if (
+    user.passwordChangedAt &&
+    UserModel.isTokenIssuedBeforePasswordChange(
+      user.passwordChangedAt,
+      decoded.iat as number,
+    )
+  ) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized !');
+  }
+  return createToken({ userId: user.id, role: user.role }, config.jwtAccessSecret, config.jwtAccessExpiresIn)
+};
 
 export const AuthServices = {
   loginUser,

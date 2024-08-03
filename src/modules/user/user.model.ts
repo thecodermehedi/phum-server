@@ -50,14 +50,16 @@ userSchema.post('save', function (doc, next) {
   next();
 });
 
-userSchema.statics.isUserExistsByCustomId = async (id: string) => await UserModel.findOne({ id }).select('+password');
+userSchema.statics.isUserExistsByCustomId = async (id: string) =>
+  await UserModel.findOne({ id }).select('+password');
 
-userSchema.statics.isPasswordMatched = async(
-  plainTextPassword,
-  hashedPassword,
-)=> await bcrypt.compare(plainTextPassword, hashedPassword);
+userSchema.statics.isPasswordMatched = async (plainTextPassword, hashedPassword) =>
+  await bcrypt.compare(plainTextPassword, hashedPassword);
 
-// userSchema.statics.isTokenIssuedBeforePasswordChange = (passwordChangedTimestamp: Date, tokenIssudedTimestamp: number) =>
+userSchema.statics.isTokenIssuedBeforePasswordChange = (
+  passwordChangedTimestamp: Date,
+  tokenIssudedTimestamp: number,
+) => new Date(passwordChangedTimestamp).getTime() / 1000 > tokenIssudedTimestamp;
 
 const UserModel = model<TUser, IUser>('User', userSchema);
 

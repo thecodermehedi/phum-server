@@ -15,7 +15,10 @@
  ┃ ┃ ┣ 📜handleDuplicateError.ts
  ┃ ┃ ┣ 📜handleValidationError.ts
  ┃ ┃ ┗ 📜handleZodError.ts
+ ┃ ┣ 📂interface
+ ┃ ┃ ┗ 📜index.d.ts
  ┃ ┣ 📂middlewares
+ ┃ ┃ ┣ 📜auth.ts
  ┃ ┃ ┣ 📜globalErrorHandler.ts
  ┃ ┃ ┣ 📜notFound.ts
  ┃ ┃ ┗ 📜validateRequest.ts
@@ -55,6 +58,7 @@
  ┃ ┃ ┃ ┣ 📜auth.routes.ts
  ┃ ┃ ┃ ┣ 📜auth.service.ts
  ┃ ┃ ┃ ┣ 📜auth.types.ts
+ ┃ ┃ ┃ ┣ 📜auth.utils.ts
  ┃ ┃ ┃ ┗ 📜auth.validator.ts
  ┃ ┃ ┣ 📂Course
  ┃ ┃ ┃ ┣ 📜course.constant.ts
@@ -99,6 +103,7 @@
  ┃ ┃ ┃ ┣ 📜student.types.ts
  ┃ ┃ ┃ ┗ 📜student.validator.ts
  ┃ ┃ ┗ 📂User
+ ┃ ┃ ┃ ┣ 📜user.constant.ts
  ┃ ┃ ┃ ┣ 📜user.controller.ts
  ┃ ┃ ┃ ┣ 📜user.model.ts
  ┃ ┃ ┃ ┣ 📜user.routes.ts

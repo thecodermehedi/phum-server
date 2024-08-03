@@ -14,7 +14,16 @@ const rawConfig = {
     ? { bcrypt_salt_rounds: Number(process.env.BCRYPT_SALT_ROUNDS) }
     : {}),
   ...(process.env.JWT_ACCESS_SECRET?.trim()
-    ? { jwtSecret: process.env.JWT_ACCESS_SECRET }
+    ? { jwtAccessSecret: process.env.JWT_ACCESS_SECRET }
+    : {}),
+  ...(process.env.JWT_ACCESS_EXPIRES_IN?.trim()
+    ? { jwtAccessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN }
+    : {}),
+  ...(process.env.JWT_REFRESH_SECRET?.trim()
+    ? { jwtRefreshSecret: process.env.JWT_REFRESH_SECRET }
+    : {}),
+  ...(process.env.JWT_REFRESH_EXPIRES_IN?.trim()
+    ? { jwtRefreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN }
     : {}),
 };
 

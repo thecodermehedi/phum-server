@@ -8,7 +8,10 @@ type TConfig = {
   dbUser?: string;
   dbPass?: string;
   bcrypt_salt_rounds: number;
-  jwtSecret: string;
+  jwtAccessSecret: string;
+  jwtAccessExpiresIn: string;
+  jwtRefreshSecret: string;
+  jwtRefreshExpiresIn: string;
 };
 
 export default TConfig;

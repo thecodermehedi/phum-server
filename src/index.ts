@@ -5,15 +5,17 @@ import config from './config';
 import notFound from './middlewares/notFound';
 import globalErrorHandler from './middlewares/globalErrorHandler';
 import { Application, Request, Response, express, mongoose } from './utils';
-import router from './routes';
 import http, { Server } from 'http';
+import router from './routes';
+import cookieParser from 'cookie-parser';
 
 export const app: Application = express();
 export const server: Server = http.createServer(app);
 const { port, nodeEnv, dbUri, dbHost, dbName } = config;
 
 app.use(express.json());
-app.use(cors());
+app.use(cookieParser());
+app.use(cors({ origin: ['http://localhost:5173'] }));
 app.use(morgan('dev'));
 
 app.get('/', (req: Request, res: Response) => {

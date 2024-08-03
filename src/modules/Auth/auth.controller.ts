@@ -1,22 +1,27 @@
+/* eslint-disable no-console */
 // import AppError from "../../errors/AppError";
 import { httpStatus, RequestHandler } from '../../utils';
 import catchAsync from '../../utils/catchAsync';
 import { AuthServices } from './auth.service';
 import sendResponse from '../../utils/sendResponse';
+import config from '../../config';
 
 const loginUser: RequestHandler = catchAsync(async (req, res) => {
-  await AuthServices.loginUser(req.body);
-
+  const result = await AuthServices.loginUser(req.body);
+  res.cookie('refreshToken', result.refreshToken, {
+    secure: config.nodeEnv === 'production',
+    httpOnly: true,
+  });
   sendResponse(req, res, {
     status: 'success',
     code: httpStatus.OK,
     message: 'User is logged in successfully',
+    data: { token: result.accessToken, needsPasswordChange: result.needsPasswordChange },
   });
 });
 
 const changePassword: RequestHandler = catchAsync(async (req, res) => {
-  const result = await AuthServices.changePassword(req.user, { ...req.body });
-  console.log(result);
+  await AuthServices.changePassword(req.user, { ...req.body });
   sendResponse(req, res, {
     status: 'success',
     code: httpStatus.OK,
@@ -25,15 +30,13 @@ const changePassword: RequestHandler = catchAsync(async (req, res) => {
 });
 
 const refreshToken: RequestHandler = catchAsync(async (req, res) => {
-  console.log(req, res);
-  // AuthServices.refreshToken()
-  // const result = await AuthServices.loginUser(req.body);
-
-  // sendResponse(req, res, {
-  //   status: 'success',
-  //   code: httpStatus.OK,
-  //   message: 'User is logged in successfully',
-  // });
+  const result = await AuthServices.refreshToken(req.cookies?.refreshToken);
+  sendResponse(req, res, {
+    status: 'success',
+    code: httpStatus.OK,
+    message: 'AccessToken is received successfully',
+    data: { accessToken: result }
+  });
 });
 
 export const AuthControllers = {
