@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-// import AppError from "../../errors/AppError";
 import { httpStatus, RequestHandler } from '../../utils';
 import catchAsync from '../../utils/catchAsync';
 import { AuthServices } from './auth.service';
