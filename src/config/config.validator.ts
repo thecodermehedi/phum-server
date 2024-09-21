@@ -15,6 +15,10 @@ const configValidation = z.object({
   jwtRefreshSecret: z.string(),
   jwtRefreshExpiresIn: z.string(),
   clientUrl: z.string().default('http://localhost:5173'),
+  smtpHost: z.string().optional(),
+  smtpPort: z.number().optional(),
+  smtpUser: z.string().optional(),
+  smtpPass: z.string().optional(),
 });
 
 export default configValidation;
