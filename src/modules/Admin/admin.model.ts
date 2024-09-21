@@ -72,7 +72,12 @@ const AdminSchema = new Schema<TAdmin>(
 );
 
 AdminSchema.virtual('fullName').get(function () {
-  return this?.name?.firstName + '' + this?.name?.middleName + '' + this?.name?.lastName;
+  const { firstName, middleName, lastName } = this.name;
+  if (middleName) {
+    return `${firstName} ${middleName} ${lastName}`;
+  } else {
+    return `${firstName} ${lastName}`;
+  }
 });
 
 AdminSchema.pre('find', function (next) {
