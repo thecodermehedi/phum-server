@@ -1,11 +1,12 @@
 import { httpStatus } from '../../utils';
 import AppError from '../../errors/AppError';
 import UserModel from '../User/user.model';
-import { TChangePasswordPayload, TLoginUser } from './auth.types';
+import { TChangePasswordPayload, TLoginUser, TResetPasswordPayload } from './auth.types';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../../config';
 import bcrypt from 'bcrypt';
 import { createToken } from './auth.utils';
+import sendEmail from '../../utils/sendEmail';
 
 const loginUser = async (payload: TLoginUser) => {
   //? Check if the user exists
@@ -136,12 +137,43 @@ const forgetPassword = async (userId: string) => {
     config.jwtAccessSecret,
     '7m',
   );
-  return `${config.clientUrl}?id=${user.id}&token=${resetToken}`;
+  const resetLink = `${config.clientUrl}?id=${user.id}&token=${resetToken}`;
+  sendEmail(user.email, user.id, resetLink, '7 minitues');
 };
+
+const resetPassword = async (payload: TResetPasswordPayload, token: string) => {
+  const decoded = jwt.verify(token, config.jwtAccessSecret) as JwtPayload;
+  const user = await UserModel.isUserExistsByCustomId(decoded.userId);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+  }
+  if (user?.isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'User is deleted');
+  }
+  if (user?.status === 'blocked') {
+    throw new AppError(httpStatus.FORBIDDEN, 'User is blocked');
+  }
+
+  if (payload.id !== user.id) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized');
+  }
+
+  const hashedPassword = await bcrypt.hash(
+    payload.newPassword,
+    config.bcrypt_salt_rounds,
+  );
+  await UserModel.findOneAndUpdate(
+    { id: decoded.userId, role: decoded.role },
+    { password: hashedPassword, needsPasswordChange: false, passwordChangedAt: new Date() },
+  );
+}
+
+
 
 export const AuthServices = {
   loginUser,
   changePassword,
   getAccessToken,
   forgetPassword,
+  resetPassword
 };
