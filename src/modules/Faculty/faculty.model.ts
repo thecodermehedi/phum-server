@@ -77,7 +77,12 @@ const FacultySchema = new Schema<TFaculty>(
 );
 
 FacultySchema.virtual('fullName').get(function () {
-  return this?.name?.firstName + '' + this?.name?.middleName + '' + this?.name?.lastName;
+  const { firstName, middleName, lastName } = this.name;
+  if (middleName) {
+    return `${firstName} ${middleName} ${lastName}`;
+  } else {
+    return `${firstName} ${lastName}`;
+  }
 });
 
 FacultySchema.pre('find', function (next) {
