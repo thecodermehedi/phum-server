@@ -27,8 +27,8 @@ const changePassword: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
-const refreshToken: RequestHandler = catchAsync(async (req, res) => {
-  const result = await AuthServices.refreshToken(req.cookies?.refreshToken);
+const getAccessToken: RequestHandler = catchAsync(async (req, res) => {
+  const result = await AuthServices.getAccessToken(req.cookies?.refresh_token);
   sendResponse(req, res, {
     status: 'success',
     code: httpStatus.OK,
@@ -51,6 +51,6 @@ const forgetPassword: RequestHandler = catchAsync(async (req, res) => {
 export const AuthControllers = {
   loginUser,
   changePassword,
-  refreshToken,
+  getAccessToken,
   forgetPassword,
 };
