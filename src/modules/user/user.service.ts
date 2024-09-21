@@ -45,6 +45,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     const userData: Partial<TUser> = {
       id: await generateStudentId(isAdmissionSemesterExists),
       role: 'student',
+      email: payload.email,
       password: password || config.defaultPassword,
     };
 
@@ -102,6 +103,7 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
     const userData: Partial<TUser> = {
       id: await generateFacultyId(),
       role: 'faculty',
+      email: payload.email,
       password: password || config.defaultPassword,
     };
 
@@ -148,6 +150,7 @@ const createAdminIntoDB = async (password: string, payload: TFaculty) => {
     const userData: Partial<TUser> = {
       id: await generateAdminId(),
       role: 'admin',
+      email: payload.email,
       password: password || config.defaultPassword,
     };
 
