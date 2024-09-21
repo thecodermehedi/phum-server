@@ -49,7 +49,7 @@ const loginUser = async (payload: TLoginUser) => {
 };
 
 const changePassword = async (userData: JwtPayload, payload: TChangePasswordPayload) => {
-  ///? Check if the user exists
+  //? Check if the user exists
   const user = await UserModel.isUserExistsByCustomId(userData.userId);
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User does not exists');
@@ -108,11 +108,40 @@ const refreshToken = async (token: string) => {
   ) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized !');
   }
-  return createToken({ userId: user.id, role: user.role }, config.jwtAccessSecret, config.jwtAccessExpiresIn)
+  return createToken(
+    { userId: user.id, role: user.role },
+    config.jwtAccessSecret,
+    config.jwtAccessExpiresIn,
+  );
+};
+
+const forgetPassword = async (userId: string) => {
+  //? Check if the user exists
+  const user = await UserModel.isUserExistsByCustomId(userId);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User does not exists');
+  }
+
+  //? Check if the user is already deleted
+  if (user?.isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'User is deleted');
+  }
+
+  //? Check if the user's status is blocked
+  if (user?.status === 'blocked') {
+    throw new AppError(httpStatus.FORBIDDEN, 'User is blocked');
+  }
+  const resetToken = createToken(
+    { userId: user.id, role: user.role },
+    config.jwtAccessSecret,
+    '7m',
+  );
+  return `${config.clientUrl}?id=${user.id}&token=${resetToken}`;
 };
 
 export const AuthServices = {
   loginUser,
   changePassword,
   refreshToken,
+  forgetPassword,
 };
