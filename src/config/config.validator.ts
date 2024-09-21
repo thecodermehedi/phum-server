@@ -14,6 +14,7 @@ const configValidation = z.object({
   jwtAccessExpiresIn: z.string(),
   jwtRefreshSecret: z.string(),
   jwtRefreshExpiresIn: z.string(),
+  clientUrl: z.string().default('http://localhost:5173'),
 });
 
 export default configValidation;
