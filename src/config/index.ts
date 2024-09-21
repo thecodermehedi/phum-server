@@ -25,6 +25,7 @@ const rawConfig = {
   ...(process.env.JWT_REFRESH_EXPIRES_IN?.trim()
     ? { jwtRefreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN }
     : {}),
+  ...(process.env.CLIENT_URL?.trim() ? { clientUrl: process.env.CLIENT_URL } : {}),
 };
 
 const config: TConfig = configValidation.parse(rawConfig);
