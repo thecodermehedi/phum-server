@@ -26,6 +26,10 @@ const rawConfig = {
     ? { jwtRefreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN }
     : {}),
   ...(process.env.CLIENT_URL?.trim() ? { clientUrl: process.env.CLIENT_URL } : {}),
+  ...(process.env.SMTP_HOST?.trim() ? { smtpHost: process.env.SMTP_HOST } : {}),
+  ...(process.env.SMTP_PORT?.trim() ? { smtpPort: Number(process.env.SMTP_PORT) } : {}),
+  ...(process.env.SMTP_USER?.trim() ? { smtpUser: process.env.SMTP_USER } : {}),
+  ...(process.env.SMTP_PASS?.trim() ? { smtpPass: process.env.SMTP_PASS } : {}),
 };
 
 const config: TConfig = configValidation.parse(rawConfig);
