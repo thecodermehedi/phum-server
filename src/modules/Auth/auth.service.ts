@@ -87,7 +87,7 @@ const changePassword = async (userData: JwtPayload, payload: TChangePasswordPayl
   );
 };
 
-const refreshToken = async (token: string) => {
+const getAccessToken = async (token: string) => {
   const decoded = jwt.verify(token, config.jwtAccessSecret) as JwtPayload;
   const user = await UserModel.isUserExistsByCustomId(decoded.userId);
   if (!user) {
@@ -142,6 +142,6 @@ const forgetPassword = async (userId: string) => {
 export const AuthServices = {
   loginUser,
   changePassword,
-  refreshToken,
+  getAccessToken,
   forgetPassword,
 };
