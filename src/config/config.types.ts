@@ -12,6 +12,7 @@ type TConfig = {
   jwtAccessExpiresIn: string;
   jwtRefreshSecret: string;
   jwtRefreshExpiresIn: string;
+  clientUrl: string;
 };
 
 export default TConfig;
