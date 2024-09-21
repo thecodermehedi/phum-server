@@ -13,6 +13,10 @@ type TConfig = {
   jwtRefreshSecret: string;
   jwtRefreshExpiresIn: string;
   clientUrl: string;
+  smtpHost?: string;
+  smtpPort?: number;
+  smtpUser?: string;
+  smtpPass?: string;
 };
 
 export default TConfig;
