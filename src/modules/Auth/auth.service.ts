@@ -2,10 +2,10 @@ import { httpStatus } from '../../utils';
 import AppError from '../../errors/AppError';
 import UserModel from '../User/user.model';
 import { TChangePasswordPayload, TLoginUser, TResetPasswordPayload } from './auth.types';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import { JwtPayload } from 'jsonwebtoken';
 import config from '../../config';
 import bcrypt from 'bcrypt';
-import { createToken } from './auth.utils';
+import { createToken, verifyToken } from './auth.utils';
 import sendEmail from '../../utils/sendEmail';
 
 const loginUser = async (payload: TLoginUser) => {
@@ -89,7 +89,7 @@ const changePassword = async (userData: JwtPayload, payload: TChangePasswordPayl
 };
 
 const getAccessToken = async (token: string) => {
-  const decoded = jwt.verify(token, config.jwtAccessSecret) as JwtPayload;
+  const decoded = verifyToken(token, config.jwtAccessSecret);
   const user = await UserModel.isUserExistsByCustomId(decoded.userId);
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
@@ -142,7 +142,7 @@ const forgetPassword = async (userId: string) => {
 };
 
 const resetPassword = async (payload: TResetPasswordPayload, token: string) => {
-  const decoded = jwt.verify(token, config.jwtAccessSecret) as JwtPayload;
+  const decoded = verifyToken(token, config.jwtAccessSecret);
   const user = await UserModel.isUserExistsByCustomId(decoded.userId);
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
