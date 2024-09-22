@@ -12,6 +12,8 @@ import { AcademicDepartmentModel } from '../AcademicDepartment/academicDepartmen
 import { TFaculty } from '../Faculty/faculty.types';
 import { FacultyModel } from '../Faculty/faculty.model';
 import { AdminModel } from '../Admin/admin.model';
+import { verifyToken } from '../Auth/auth.utils';
+import { USER_ROLE } from './user.constant';
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   const isAdmissionSemesterExists = await AcademicSemesterModel.findById(
@@ -187,8 +189,23 @@ const createAdminIntoDB = async (password: string, payload: TFaculty) => {
   }
 };
 
+const getMeFromDB = async (token: string) => {
+  const { userId, role } = verifyToken(token, config.jwtAccessSecret);
+  if (role === USER_ROLE.student) {
+    return await StudentModel.find({ id: userId }).populate("admissionSemester").populate('academicDepartment')
+  }
+  if (role === USER_ROLE.admin) {
+    return await AdminModel.find({ id: userId }).populate('user');
+  }
+  if (role === USER_ROLE.faculty) {
+    return await FacultyModel.find({ id: userId }).populate('user').populate('academicDepartment');
+  }
+  return null;
+};
+
 export const UserServices = {
   createStudentIntoDB,
   createFacultyIntoDB,
   createAdminIntoDB,
+  getMeFromDB,
 };

@@ -60,8 +60,26 @@ const createAdmin: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+const getMe: RequestHandler = catchAsync(async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Token not found');
+  }
+  const result = await UserServices.getMeFromDB(token);
+  if (!result) {
+    throw new AppError(httpStatus.NOT_FOUND, 'No Data Found')
+  }
+  sendResponse(req, res, {
+    status: 'success',
+    code: httpStatus.OK,
+    message: 'User data retrieved successfully',
+    data: result
+  });
+})
+
 export const UserControllers = {
   createStudent,
   createFaculty,
   createAdmin,
+  getMe
 };
