@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import { Schema, model } from '../../utils';
 import { IUser, TUser } from './user.types';
 import config from '../../config';
+import { userStatus } from './user.constant';
 
 const userSchema = new Schema<TUser, IUser>(
   {
@@ -31,7 +32,7 @@ const userSchema = new Schema<TUser, IUser>(
     },
     status: {
       type: String,
-      enum: ['in-progress', 'blocked'],
+      enum: userStatus,
       default: 'in-progress',
     },
     isDeleted: {
