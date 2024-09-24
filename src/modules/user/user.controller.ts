@@ -61,11 +61,8 @@ const createAdmin: RequestHandler = catchAsync(async (req, res) => {
 });
 
 const getMe: RequestHandler = catchAsync(async (req, res) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Token not found');
-  }
-  const result = await UserServices.getMeFromDB(token);
+  const { userId, role } = req.user;
+  const result = await UserServices.getMeFromDB(userId, role);
   if (!result) {
     throw new AppError(httpStatus.NOT_FOUND, 'No Data Found')
   }
@@ -77,9 +74,25 @@ const getMe: RequestHandler = catchAsync(async (req, res) => {
   });
 })
 
+const changeStatus: RequestHandler = catchAsync(async (req, res) => {
+  const { userId } = req.params;
+  const { status } = req.body;
+  const result = await UserServices.changeStatus(userId, status);
+  if (!result) {
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, 'Failed to change status');
+  }
+  sendResponse(req, res, {
+    status: 'success',
+    code: httpStatus.OK,
+    message: 'Status changed successfully',
+    data: result
+  });
+ });
+
 export const UserControllers = {
   createStudent,
   createFaculty,
   createAdmin,
-  getMe
+  getMe,
+  changeStatus,
 };
