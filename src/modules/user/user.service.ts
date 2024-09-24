@@ -12,8 +12,8 @@ import { AcademicDepartmentModel } from '../AcademicDepartment/academicDepartmen
 import { TFaculty } from '../Faculty/faculty.types';
 import { FacultyModel } from '../Faculty/faculty.model';
 import { AdminModel } from '../Admin/admin.model';
-import { verifyToken } from '../Auth/auth.utils';
 import { USER_ROLE } from './user.constant';
+import isValidObjectId from '../../utils/isValidObjectId';
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   const isAdmissionSemesterExists = await AcademicSemesterModel.findById(
@@ -189,18 +189,33 @@ const createAdminIntoDB = async (password: string, payload: TFaculty) => {
   }
 };
 
-const getMeFromDB = async (token: string) => {
-  const { userId, role } = verifyToken(token, config.jwtAccessSecret);
+const getMeFromDB = async (userId: string, role: string) => {
   if (role === USER_ROLE.student) {
-    return await StudentModel.find({ id: userId }).populate("admissionSemester").populate('academicDepartment')
+    return await StudentModel.find({ id: userId })
+      .populate('admissionSemester')
+      .populate('academicDepartment');
   }
   if (role === USER_ROLE.admin) {
     return await AdminModel.find({ id: userId }).populate('user');
   }
   if (role === USER_ROLE.faculty) {
-    return await FacultyModel.find({ id: userId }).populate('user').populate('academicDepartment');
+    return await FacultyModel.find({ id: userId })
+      .populate('user')
+      .populate('academicDepartment');
   }
   return null;
+};
+
+const changeStatus = async (userId: string, status: string) => {
+  const isValid = isValidObjectId(userId);
+  if (!isValid) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Invalid user id');
+  }
+  const user = await UserModel.findById(userId);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  return await UserModel.findByIdAndUpdate(userId, { status }, { new: true });
 };
 
 export const UserServices = {
@@ -208,4 +223,5 @@ export const UserServices = {
   createFacultyIntoDB,
   createAdminIntoDB,
   getMeFromDB,
+  changeStatus,
 };
