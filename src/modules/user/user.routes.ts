@@ -6,6 +6,7 @@ import { FacultyValidations } from '../Faculty/faculty.validator';
 import { StudentValidations } from '../student/student.validator';
 import { USER_ROLE } from './user.constant';
 import { UserControllers } from './user.controller';
+import { userValidations } from './user.validator';
 
 const router = createRouter();
 
@@ -31,6 +32,9 @@ router.post(
   UserControllers.createAdmin,
 );
 
+
 router.get('/me', auth(USER_ROLE.admin, USER_ROLE.faculty, USER_ROLE.student), UserControllers.getMe);
+
+router.patch('/change-status/:userId', auth(USER_ROLE.admin), validateRequest(userValidations.statusUpdateValidationSchema), UserControllers.changeStatus);
 
 export const UserRoutes = router;
