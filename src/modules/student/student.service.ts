@@ -27,8 +27,19 @@ const getStudentsFromDB = async (query: Record<string, unknown>) => {
   return await finalQuery.modelQuery;
 };
 
-const getStudentFromDB = (studentId: string) => {
-  return StudentModel.findOne({ id: studentId })
+const getStudentFromDB = async (studentId: string) => {
+  const student = await StudentModel.findOne({ id: studentId });
+  if (!student) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Student not found in the database');
+  }
+  const user = await UserModel.findById(student.user);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found in the database');
+  }
+  if (user.status === 'blocked') {
+    throw new AppError(httpStatus.FORBIDDEN, 'Student is blocked');
+  }
+  return await StudentModel.findOne({ id: studentId })
     .populate('user')
     .populate('admissionSemester')
     .populate({
