@@ -30,6 +30,13 @@ const rawConfig = {
   ...(process.env.SMTP_PORT?.trim() ? { smtpPort: Number(process.env.SMTP_PORT) } : {}),
   ...(process.env.SMTP_USER?.trim() ? { smtpUser: process.env.SMTP_USER } : {}),
   ...(process.env.SMTP_PASS?.trim() ? { smtpPass: process.env.SMTP_PASS } : {}),
+  ...(process.env.CLOUDINARY_CLOUD_NAME?.trim()
+    ? { cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME }
+    : {}),
+  ...(process.env.CLOUDINARY_API_KEY?.trim() ? { cloudinaryApiKey: process.env.CLOUDINARY_API_KEY } : {}),
+  ...(process.env.CLOUDINARY_API_SECRET?.trim()
+    ? { cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET }
+    : {}),
 };
 
 const config: TConfig = configValidation.parse(rawConfig);
