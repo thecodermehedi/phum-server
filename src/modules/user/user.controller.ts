@@ -6,6 +6,7 @@ import AppError from '../../errors/AppError';
 
 const createStudent: RequestHandler = catchAsync(async (req, res) => {
   const result = await UserServices.createStudentIntoDB(
+    req.file,
     req.body.password,
     req.body.student,
   );
@@ -25,6 +26,7 @@ const createStudent: RequestHandler = catchAsync(async (req, res) => {
 });
 const createFaculty: RequestHandler = catchAsync(async (req, res) => {
   const result = await UserServices.createFacultyIntoDB(
+    req.file,
     req.body.password,
     req.body.faculty,
   );
@@ -44,7 +46,11 @@ const createFaculty: RequestHandler = catchAsync(async (req, res) => {
 });
 
 const createAdmin: RequestHandler = catchAsync(async (req, res) => {
-  const result = await UserServices.createAdminIntoDB(req.body.password, req.body.admin);
+  const result = await UserServices.createAdminIntoDB(
+    req.file,
+    req.body.password,
+    req.body.admin,
+  );
   if (!result.isCreated) {
     throw new AppError(
       httpStatus.INTERNAL_SERVER_ERROR,
@@ -64,15 +70,15 @@ const getMe: RequestHandler = catchAsync(async (req, res) => {
   const { userId, role } = req.user;
   const result = await UserServices.getMeFromDB(userId, role);
   if (!result) {
-    throw new AppError(httpStatus.NOT_FOUND, 'No Data Found')
+    throw new AppError(httpStatus.NOT_FOUND, 'No Data Found');
   }
   sendResponse(req, res, {
     status: 'success',
     code: httpStatus.OK,
     message: 'User data retrieved successfully',
-    data: result
+    data: result,
   });
-})
+});
 
 const changeStatus: RequestHandler = catchAsync(async (req, res) => {
   const { userId } = req.params;
@@ -85,9 +91,9 @@ const changeStatus: RequestHandler = catchAsync(async (req, res) => {
     status: 'success',
     code: httpStatus.OK,
     message: 'Status changed successfully',
-    data: result
+    data: result,
   });
- });
+});
 
 export const UserControllers = {
   createStudent,

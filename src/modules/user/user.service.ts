@@ -14,8 +14,10 @@ import { FacultyModel } from '../Faculty/faculty.model';
 import { AdminModel } from '../Admin/admin.model';
 import { USER_ROLE } from './user.constant';
 import isValidObjectId from '../../utils/isValidObjectId';
+import sendPhotoToCloudinary from '../../utils/sendPhotoToCloudinary';
+import { TAdmin } from '../Admin/admin.types';
 
-const createStudentIntoDB = async (password: string, payload: TStudent) => {
+const createStudentIntoDB = async (file: any, password: string, payload: TStudent) => {
   const isAdmissionSemesterExists = await AcademicSemesterModel.findById(
     payload.admissionSemester,
   );
@@ -44,12 +46,21 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     let isCreated: boolean = false;
     currentSession.startTransaction();
 
+    const studentId = await generateStudentId(isAdmissionSemesterExists);
+
     const userData: Partial<TUser> = {
-      id: await generateStudentId(isAdmissionSemesterExists),
+      id: studentId,
       role: 'student',
       email: payload.email,
       password: password || config.defaultPassword,
     };
+
+    if (file) {
+      const name = `${studentId}_${payload?.name?.firstName}`;
+      const path = file?.path;
+      const { secure_url } = await sendPhotoToCloudinary(name, path);
+      payload.profileImg = secure_url as string;
+    }
 
     const newUser = await UserModel.create([userData], { currentSession });
 
@@ -84,7 +95,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   }
 };
 
-const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
+const createFacultyIntoDB = async (file: any, password: string, payload: TFaculty) => {
   const academicDepartment = await AcademicDepartmentModel.findById(
     payload.academicDepartment,
   );
@@ -102,12 +113,21 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
     let isCreated: boolean = false;
     currentSession.startTransaction();
 
+    const facultyId = await generateFacultyId();
+
     const userData: Partial<TUser> = {
-      id: await generateFacultyId(),
+      id: facultyId,
       role: 'faculty',
       email: payload.email,
       password: password || config.defaultPassword,
     };
+
+    if (file) {
+      const name = `${facultyId}_${payload?.name?.firstName}`;
+      const path = file?.path;
+      const { secure_url } = await sendPhotoToCloudinary(name, path);
+      payload.profileImg = secure_url as string;
+    }
 
     const newUser = await UserModel.create([userData], { currentSession });
 
@@ -142,19 +162,28 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
   }
 };
 
-const createAdminIntoDB = async (password: string, payload: TFaculty) => {
+const createAdminIntoDB = async (file: any, password: string, payload: TAdmin) => {
   const currentSession = await mongoose.startSession();
 
   try {
     let isCreated: boolean = false;
     currentSession.startTransaction();
 
+    const adminId = await generateAdminId();
+
     const userData: Partial<TUser> = {
-      id: await generateAdminId(),
+      id: adminId,
       role: 'admin',
       email: payload.email,
       password: password || config.defaultPassword,
     };
+
+    if (file) {
+      const name = `${adminId}_${payload?.name?.firstName}`;
+      const path = file?.path;
+      const { secure_url } = await sendPhotoToCloudinary(name, path);
+      payload.profileImg = secure_url as string;
+    }
 
     const newUser = await UserModel.create([userData], { currentSession });
 

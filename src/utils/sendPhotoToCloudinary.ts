@@ -1,40 +1,31 @@
-import { v2 as cloudinary } from 'cloudinary';
+import fs from 'fs';
 import config from '../config';
+import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 
-const sendPhotoToCloudinary = async () => {
+cloudinary.config({
+  cloud_name: config.cloudinaryCloudName,
+  api_key: config.cloudinaryApiKey,
+  api_secret: config.cloudinaryApiSecret,
+});
 
-  // Configuration
-  cloudinary.config({
-    cloud_name: config.cloudinaryCloudName,
-    api_key: config.cloudinaryApiKey,
-    api_secret: config.cloudinaryApiSecret,
-  });
-
-  // Upload an image
-  const uploadResult = await cloudinary.uploader
-    .upload('https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg', {
-      public_id: 'shoes',
-    })
-    .catch((error) => {
-      console.log(error);
+const sendPhotoToCloudinary = async (
+  name: string,
+  path: string,
+): Promise<Record<string, unknown>> => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload(path, { public_id: name.trim() }, (error, result) => {
+      if (error) {
+        reject(error);
+      }
+      resolve(result as UploadApiResponse);
+      fs.unlink(path, (err) => {
+        if (err) {
+          console.error(err);
+        } else {
+          console.log(`${path} is deleted`);
+        }
+      });
     });
-
-  console.log(uploadResult);
-
-  // Optimize delivery by resizing and applying auto-format and auto-quality
-  const optimizeUrl = cloudinary.url('shoes', {
-    fetch_format: 'auto',
-    quality: 'auto',
-  });
-
-  console.log(optimizeUrl);
-
-  // Transform the image: auto-crop to square aspect_ratio
-  const autoCropUrl = cloudinary.url('shoes', {
-    crop: 'auto',
-    gravity: 'auto',
-    width: 500,
-    height: 500,
   });
 };
 
