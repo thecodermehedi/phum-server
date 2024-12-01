@@ -12,9 +12,9 @@ type TConfig = {
   smtpPort?: number;
   smtpUser?: string;
   smtpPass?: string;
-  cloudinaryCloudName: string;
-  cloudinaryApiKey: string;
-  cloudinaryApiSecret: string;
+  cloudinaryCloudName?: string;
+  cloudinaryApiKey?: string;
+  cloudinaryApiSecret?: string;
   jwtAccessSecret: string;
   jwtAccessExpiresIn: string;
   jwtRefreshSecret: string;
