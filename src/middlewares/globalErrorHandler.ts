@@ -14,7 +14,7 @@ import handleCastError from '../errors/handleCastError';
 import handleDuplicateError from '../errors/handleDuplicateError';
 import AppError from '../errors/AppError';
 
-const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
+const globalErrorHandler: ErrorRequestHandler = (err, req, res, _next) => {
   let errorCode: number = httpStatus.INTERNAL_SERVER_ERROR;
   let errorMessage: string = 'Something went wrong';
   let errorDetails: Array<TErrorObject> = [{ path: '', message: 'Something went wrong' }];
@@ -53,7 +53,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   if (err instanceof AppError) {
     errorCode = err.code;
     errorMessage = err.message;
-    errorDetails = [{ path: err.path, message: err.message }];
+    errorDetails = [{ path: err.path as string | number, message: err.message }];
   }
 
   if (err instanceof Error) {
@@ -61,7 +61,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     errorDetails = [{ path: '', message: err.message }];
   }
 
-  return res.status(errorCode).json({
+  res.status(errorCode).json({
     status: 'error',
     message: errorMessage,
     details: errorDetails,

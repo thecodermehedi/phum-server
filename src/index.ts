@@ -8,6 +8,7 @@ import { Application, Request, Response, express, mongoose } from './utils';
 import http, { Server } from 'http';
 import router from './routes';
 import cookieParser from 'cookie-parser';
+import seedSuperAdmin from './seed';
 
 export const app: Application = express();
 export const server: Server = http.createServer(app);
@@ -15,7 +16,7 @@ const { port, nodeEnv, dbUri, dbHost, dbName } = config;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: ['http://localhost:5173'] }));
+app.use(cors({ origin: 'http://localhost:5500', credentials: true }));
 app.use(morgan('dev'));
 
 app.get('/', (req: Request, res: Response) => {
@@ -55,7 +56,7 @@ app.use(globalErrorHandler);
           : '🟢 Connected to MongoDB Atlas (prod)',
       );
     }
-
+    seedSuperAdmin();
     server.listen(port, () => {
       console.log(`🗄️ Server is running on ${port} (${nodeEnv} mode)`);
     });

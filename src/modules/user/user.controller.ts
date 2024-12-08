@@ -64,15 +64,15 @@ const getMe: RequestHandler = catchAsync(async (req, res) => {
   const { userId, role } = req.user;
   const result = await UserServices.getMeFromDB(userId, role);
   if (!result) {
-    throw new AppError(httpStatus.NOT_FOUND, 'No Data Found')
+    throw new AppError(httpStatus.NOT_FOUND, 'No Data Found');
   }
   sendResponse(req, res, {
     status: 'success',
     code: httpStatus.OK,
     message: 'User data retrieved successfully',
-    data: result
+    data: result,
   });
-})
+});
 
 const changeStatus: RequestHandler = catchAsync(async (req, res) => {
   const { userId } = req.params;
@@ -85,9 +85,9 @@ const changeStatus: RequestHandler = catchAsync(async (req, res) => {
     status: 'success',
     code: httpStatus.OK,
     message: 'Status changed successfully',
-    data: result
+    data: result,
   });
- });
+});
 
 export const UserControllers = {
   createStudent,

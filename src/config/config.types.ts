@@ -20,6 +20,7 @@ type TConfig = {
   jwtRefreshSecret: string;
   jwtRefreshExpiresIn: string;
   bcrypt_salt_rounds: number;
+  super_admin_password: string;
 };
 
 export default TConfig;

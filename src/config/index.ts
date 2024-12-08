@@ -33,9 +33,14 @@ const rawConfig = {
   ...(process.env.CLOUDINARY_CLOUD_NAME?.trim()
     ? { cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME }
     : {}),
-  ...(process.env.CLOUDINARY_API_KEY?.trim() ? { cloudinaryApiKey: process.env.CLOUDINARY_API_KEY } : {}),
+  ...(process.env.CLOUDINARY_API_KEY?.trim()
+    ? { cloudinaryApiKey: process.env.CLOUDINARY_API_KEY }
+    : {}),
   ...(process.env.CLOUDINARY_API_SECRET?.trim()
     ? { cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET }
+    : {}),
+  ...(process.env.SUPER_ADMIN_PASSWORD?.trim()
+    ? { super_admin_password: process.env.SUPER_ADMIN_PASSWORD }
     : {}),
 };
 

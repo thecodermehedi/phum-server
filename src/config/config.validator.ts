@@ -22,6 +22,7 @@ const configValidation = z.object({
   jwtRefreshSecret: z.string(),
   jwtRefreshExpiresIn: z.string(),
   bcrypt_salt_rounds: z.number().default(12),
+  super_admin_password: z.string().default('Pa$$w0rd!'),
 });
 
 export default configValidation;

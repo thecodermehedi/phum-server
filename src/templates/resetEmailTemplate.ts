@@ -1,4 +1,8 @@
-const resetEmailTemplate = (userName: string, resetLink: string, expirationTime: string) => {
+const resetEmailTemplate = (
+  userName: string,
+  resetLink: string,
+  expirationTime: string,
+) => {
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -328,7 +332,7 @@ const resetEmailTemplate = (userName: string, resetLink: string, expirationTime:
     </table>
   </body>
 </html>
-`
-}
+`;
+};
 
-export default resetEmailTemplate
+export default resetEmailTemplate;

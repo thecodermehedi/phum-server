@@ -2,7 +2,6 @@ import { v2 as cloudinary } from 'cloudinary';
 import config from '../config';
 
 const sendPhotoToCloudinary = async () => {
-
   // Configuration
   cloudinary.config({
     cloud_name: config.cloudinaryCloudName,

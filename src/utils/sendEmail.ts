@@ -10,7 +10,7 @@ const sendEmail = async (to: string, name: string, resetlink: string, exp: strin
     secure: config.nodeEnv === 'production',
     auth: {
       user: config.smtpUser,
-      pass: config.smtpPass
+      pass: config.smtpPass,
     },
   });
 
@@ -18,11 +18,10 @@ const sendEmail = async (to: string, name: string, resetlink: string, exp: strin
     from: config.smtpUser,
     to,
     subject: `Password Reset Request for ${name}`,
-    html: emailTemplate
+    html: emailTemplate,
   };
 
   await transporter.sendMail(mailOptions);
-
 };
 
 export default sendEmail;

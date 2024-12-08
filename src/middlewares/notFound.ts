@@ -2,8 +2,8 @@ import config from '../config';
 import { RequestHandler, httpStatus } from '../utils';
 import getCurrentDateTime from '../utils/getCurrentDateTime';
 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-const notFound: RequestHandler = (req, res, next) => {
-  return res.status(httpStatus.NOT_FOUND).json({
+const notFound: RequestHandler = (req, res, _next) => {
+  res.status(httpStatus.NOT_FOUND).json({
     status: 'error',
     message: 'Resource not found',
     timestamp: getCurrentDateTime(),
